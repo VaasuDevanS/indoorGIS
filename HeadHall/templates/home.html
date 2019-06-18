@@ -1,0 +1,112 @@
+{% load static %}
+<html>
+<head>
+    <title> indoorGIS: HeadHall </title>
+    <link rel="stylesheet" href="{% static 'HeadHall/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'HeadHall/css/leaflet.css' %}" />
+    <link rel="stylesheet" href="{% static 'HeadHall/css/easy-button.css' %}" />
+
+    <style>
+        .leaflet-container {
+            background-color:rgba(255,0,0,0.0);
+            border: 1px solid black;
+        }
+    </style>
+
+</head>
+<body>
+    <script src="{% static 'HeadHall/js/jquery-3.3.1.js' %}"> </script>
+    <script src="{% static 'HeadHall/js/bootstrap.min.js' %}"> </script>
+    <script src="{% static 'HeadHall/js/leaflet.js' %}"> </script>
+    <script src="{% static 'HeadHall/features/E_Level.js' %}"> </script>
+
+    <div class="container">
+        <center> <br><br><br>
+            <div id="ELevel" style="width:85%;height:53%"> </div> <br>
+            <button onclick="clearFunc()"> Clear </button>
+        </center>
+    </div>
+
+<script>
+
+var eLevel = L.map('ELevel', {
+                    minZoom: 2.45,
+                    maxZoom: 5,
+                    crs: L.CRS.Simple,
+                    maxBounds: [[0, 0], [90, 180]],
+                    maxBoundsViscosity: 1.0,
+                    attributionControl: false
+});
+
+url = "{% static 'HeadHall/baseimages/E_Level.png' %}";
+var bounds = [[0, 0], [90, 180]];
+L.imageOverlay(url, bounds).addTo(eLevel);
+eLevel.fitBounds(bounds);
+
+let blkLyrClear, stops=[], markerArray = []; // Global
+blkLyr = L.geoJSON(Blocks, {
+           style: function() {return{weight: 0.2, fillOpacity: 0,opacity: 0.5}},
+           onEachFeature: function(feature, layer){
+               blkLyrClear = layer;
+
+               // Popup Content
+               var content = "";
+               content += "No: " + feature.properties.PlaceNode + "<br>";
+               content += "Name: " + feature.properties.PlaceName;
+               layer.bindPopup(content);
+               // layer.on('mouseover', function(f) {layer.openPopup();});
+               // layer.on('mouseout', function(f) {layer.closePopup();});
+               layer.off('click', this.openPopup);
+
+               // Highlight selected and keep track of the selected
+               layer.on('click', function(f) {
+                   placeNode = f.target.feature.properties.PlaceNode;
+                   if (f.target.options.color=="#00FFFF"){
+                        blkLyr.resetStyle(f.target);
+                        stops.splice(stops.indexOf(placeNode),1);
+                    } else {
+                        f.target.setStyle({color:"#00FFFF", fillOpacity:0.5});
+                        stops.push(placeNode);
+                        if(stops.length==2){ route(); }
+                    }
+             });
+           }
+}).addTo(eLevel);
+
+// Clear selected blocks and route
+function clearFunc() {
+    stops=[], markerArray=[];
+    blkLyr.setStyle(blkLyrClear.options);
+    eLevel.removeLayer(markerGroup);
+    eLevel.setZoom(2.45);
+}
+
+// Icon for the route
+var footpath = L.icon({
+    iconUrl: "{% static 'HeadHall/walking.png' %}",
+    iconSize: [20,20]
+});
+
+// Generate route
+function route() {
+    $.ajax({url: "{% url 'SolveNetwork' %}",
+            headers: {"X-CSRFToken": '{{ csrf_token }}'},
+            type: "POST",
+            data: {from:stops[0], to:stops[1]},
+            success: function(i){
+                extnt_pts = eval(i);
+                bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
+                          [extnt_pts[0][1], extnt_pts[0][0]]];
+                for(pt of extnt_pts[1]){
+                    markerArray.push(L.marker(pt, {icon: footpath}));
+                    bounds.push(pt);
+                }
+                markerGroup = L.featureGroup(markerArray).addTo(eLevel);
+                eLevel.fitBounds(bounds);
+        }});
+}
+
+</script>
+
+</body>
+</html>
