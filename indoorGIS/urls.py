@@ -17,8 +17,20 @@ from django.contrib import admin
 from django.urls import path
 from HeadHall import views
 
+admin.site.site_header = 'indoorGIS Administration'
+admin.site.site_title = 'indoorGIS Administration'
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+
     path('', views.home, name='HeadHall'),
-    path('solve/', views.solve_network, name='SolveNetwork')
+    path('admin/', views.create_model_objects, name='create_model_objects'),
+    path('AdminLogin/', admin.site.urls, name="AdminLogin"),
+
+    # Functionalities
+    path('solve/', views.solve_network, name='SolveNetwork'),
+    path('loadFields', views.loadFields, name='loadFields'),
+    path('loadJSON', views.loadJSON, name='loadJSON'),
+    path('searchBox', views.searchBox, name='searchBox'),
+    path('from_to_route', views.from_to_route, name='from_to_route'),
+
 ]

@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import ELevel
 
-# Register your models here.
+@admin.register(ELevel)
+class ELevelAdmin(admin.ModelAdmin):
+    list_display = ('OBJECTID',
+                    'PlaceName', 'PersonName', 'Contact', 'Email', 'Details',
+                    'PlaceNode',)

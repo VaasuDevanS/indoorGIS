@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'HeadHall'
 ]
 
@@ -126,3 +127,4 @@ MEDIA_ROOT = u'/home/indoorGIS/indoorGIS/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = u'/home/indoorGIS/indoorGIS/static'
 STATIC_URL = '/static/'
+
