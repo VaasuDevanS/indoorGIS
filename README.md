@@ -5,20 +5,38 @@
 Directed Research Project - Summer (2019)<br />
 Study Area: HeadHall - [Link](https://www.google.com/maps/place/Head+Hall,+NB-1,+Fredericton,+NB/@45.9496034,-66.6424096,18.75z/data=!4m5!3m4!1s0x4ca4220f063c4685:0xd90a16a19db56df7!8m2!3d45.949433!4d-66.6421681 "View in Google Maps")
 
-**Short description:** WebApp for finding facilities and routes between facilities and more<br />
+**Short description:** WebApp for finding Faculties, Route between faculties and more<br />
 **Supervisor:** [Shabnam Jabari](https://www.unb.ca/faculty-staff/directory/engineering-geomatics/jabari-shabnam.html)
 
 
-| Package   | Reference                                                        | Version |
-| --------- | ---------------------------------------------------------------- | ------- |
-| Django    | [https://www.djangoproject.com/](https://www.djangoproject.com/) | 2.1     |
-| Networkx  | [https://networkx.github.io/](https://networkx.github.io/)       | 2.1     |
-| Geopandas | [https://geopandas.org/](http://geopandas.org/)                  | 0.5.0   |
-| Leaflet   | [https://leafletjs.com](https://leafletjs.com)                   | 1.5.1   |
-| Jquery    | [https://jquery.com/](https://jquery.com/)                       | 3.3.1   |
-| Bootstrap | [https://getbootstrap.com/](https://getbootstrap.com/)           | 3.3.7   |
+| Package   | Reference                                                                | Version                |
+| --------- | ------------------------------------------------------------------------ | ---------------------- |
+| Django    | [https://www.djangoproject.com/](https://www.djangoproject.com/)         | 2.1                    |
+| Networkx  | [https://networkx.github.io/](https://networkx.github.io/)               | 2.1                    |
+| Geopandas | [https://geopandas.org/](http://geopandas.org/)                          | 0.5.0 (pandas: 0.24.2) |
+| Leaflet   | [https://leafletjs.com](https://leafletjs.com)                           | 1.5.1                  |
+| Jquery    | [https://jquery.com/](https://jquery.com/)                               | 3.3.1                  |
+| Bootstrap | [https://getbootstrap.com/](https://getbootstrap.com/)                   | 3.3.7                  |
+| Slick     | [http://kenwheeler.github.io/slick/](http://kenwheeler.github.io/slick/) | 1.3.6                  |
+
+### Georeferencing
+To obtain geo-referenced tiff with the Plan images, the following [gdal_translate](https://gdal.org/programs/gdal_translate.html) command was used
+```console
+gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level.tiff
+```
 
 ### Commit log
+***
+
+**Commit 3 (July , 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v3.0.mp4)
+* Added the remaining levels (B, C, D); Displayed using Slick JS Carousel
+* Search functionality and editable model for all the levels
+* Removed onClick routing functionality and modified to open popup
+* Added the 'about' modal
+
+***known issues***
+* Shortest path through the blocks
+
 ***
 
 **Commit 2 (June 28, 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v2.0.mp4)

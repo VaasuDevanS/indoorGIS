@@ -1,10 +1,16 @@
-<html> {% load static %}
+<html lang="en"> {% load static %}
 <head>
-    <title> indoorGIS: HeadHall </title>
-    <link rel="icon" href="{% static 'HeadHall/images/GISIcon.ico' %}">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <link rel="stylesheet" href="{% static 'HeadHall/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/leaflet.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/jquery-ui.css' %}" />
+    <link rel="stylesheet" href="{% static 'HeadHall/css/slick.css' %}"/>
+
+    <title> indoorGIS: HeadHall </title>
+    <link rel="icon" href="{% static 'HeadHall/images/GISIcon.ico' %}">
 
     <style>
         .leaflet-container {
@@ -14,7 +20,7 @@
         input[type=text] {
             border: none;
             border-bottom: 1px solid purple;
-            width: 250px;
+            width: 270px;
             background-color: #F5F5F5;
         }
         img:hover {
@@ -36,6 +42,12 @@
         #toReset {
             left: -41px;
         }
+        .carouselMap {
+            width: 100%;
+            height: 53.2%;
+        }
+        /*.slick-prev:after { content: "<"; color: black; font-size: 30px; }*/
+        /*.slick-next:before { content: ">"; color: black; font-size: 30px; }*/
     </style>
 
 </head>
@@ -44,8 +56,9 @@
     <script src="{% static 'HeadHall/js/jquery-ui.js' %}"> </script>
     <script src="{% static 'HeadHall/js/bootstrap.min.js' %}"> </script>
     <script src="{% static 'HeadHall/js/leaflet.js' %}"> </script>
+    <script src="{% static 'HeadHall/js/slick.min.js' %}"> </script>
 
-    <div style="float:left; padding-top:3%;padding-left:2.6%">
+    <div style="float:left; padding-top:3%; padding-left:2.6%">
         <img id="srchBtn" title="Search" src="{% static 'HeadHall/images/Search-icon.png' %}"> &emsp;&emsp;
         <img id="rteBtn" title="Directions" src="{% static 'HeadHall/images/directions-icon.png' %}"> &emsp;&emsp;
         <img title="Clear" src="{% static 'HeadHall/images/clear.png' %}" onclick="clearFunc()">
@@ -68,23 +81,70 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" style="padding-left:40px">
         <center> <br><br>
-            <div id="fields"> </div> <br>
-            <div id="ELevel" style="width:85%;height:53%"> </div>
+            <div id="fields"> </div> <br> <br>
+            <div class="carouselMap">
+                <div> <div id="ELevel" style="width:87%;height:100%"> </div> </div>
+                <div> <div id="DLevel" style="width:90%;height:100%"> </div> </div>
+                <div> <div id="CLevel" style="width:87%;height:100%"> </div> </div>
+                <div> <div id="BLevel" style="width:87%;height:100%"> </div> </div>
+            </div>
+            <div class="menu">
+                <a href="#">E Level</a> |
+                <a href="#">D Level</a> |
+                <a href="#">C Level</a> |
+                <a href="#">B Level</a>
+            </div>
+            <a href="#about" data-toggle="modal">About</a> -
+            <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a>
         </center>
-    </div>
+    </div> <br>
+
+	<div id="about" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">indoorGIS</h4>
+				</div>
+				<div class="modal-body">
+				    <img src="{% static 'HeadHall/images/UNBLogo.jpg' %}" width=200 height=100>
+				    <img src="{% static 'HeadHall/images/GGELogo.gif' %}" width=100 height=100> <br> <br>
+					<b> Directed Research Project - 2019 </b><br>
+					WebApp for finding Faculties, Route between faculties and more <br>
+					Supervisor: <a href="https://www.unb.ca/faculty-staff/directory/engineering-geomatics/jabari-shabnam.html" target="_blank">Shabnam Jabari</a><br>
+					Developer: <a href="https://vaasudevans.github.io/" target="_blank">Vaasudevan Srinivasan</a> <br> <br>
+					<a href="https://www.unb.ca/" target="_blank">UNB Homepage</a> |
+					<a href="https://www.unb.ca/fredericton/engineering/depts/gge/index.html" target="_blank">GGE Homepage</a>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 <script>
 
 $(function(){
 
+    $(".carouselMap").slick({
+        draggable: false,
+        arrows: false
+    });
+    $(".menu a").click(function(e){
+        e.preventDefault();
+        slideIndex = $(this).index();
+        $( '.carouselMap' ).slickGoTo( parseInt(slideIndex) );
+    });
+
     // http://output.jsbin.com/uloli3/63
     $("#srchReset").click(function(){
         $("#searchBox").val("").focus();
-        $("#srchResult").html("");
-        EblkLyr.setStyle(styleFunc());
-        eLevel.setZoom(2.45);
+        resetStyle();
     })
     $("#fromReset").click(function(){
         markerArray = [];
@@ -128,7 +188,11 @@ $(function(){
                     source: eval(flds),
                     minLength:2
                 });
-                $("#fields").html("<b>Search/Route for: </b>" + flds)
+                tmpFlds = [];
+                for(i in eval(flds)){
+                    tmpFlds.push(" "+eval(flds)[i].label)
+                }
+                $("#fields").html("<b>Search/Route for: </b>" + tmpFlds)
             }
     });
 
@@ -137,10 +201,27 @@ $(function(){
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
             success: function(Blocks){
-                EblkLyr = L.geoJSON(JSON.parse(Blocks), {
+                allBlks = eval(Blocks)
+                // E-Level
+                EblkLyr = L.geoJSON(JSON.parse(allBlks[0]), {
                                     style: styleFunc,
                                     onEachFeature: onEachFeatureFunc
                 }).addTo(eLevel);
+                // D-Level
+                DblkLyr = L.geoJSON(JSON.parse(allBlks[1]), {
+                                    style: styleFunc,
+                                    onEachFeature: onEachFeatureFunc
+                }).addTo(dLevel);
+                // C-Level
+                CblkLyr = L.geoJSON(JSON.parse(allBlks[2]), {
+                                    style: styleFunc,
+                                    onEachFeature: onEachFeatureFunc
+                }).addTo(cLevel);
+                // B-Level
+                BblkLyr = L.geoJSON(JSON.parse(allBlks[3]), {
+                                    style: styleFunc,
+                                    onEachFeature: onEachFeatureFunc
+                }).addTo(bLevel);
             }
     });
 
@@ -152,21 +233,29 @@ function search(){
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
             data: {keyword: $("#searchBox").val()},
-            success: function(Oid){
-                for(i in EblkLyr._layers){
-                    f = EblkLyr._layers[i].feature.properties;
+            success: function(Oid_lvl){
+                Oid = eval(Oid_lvl)[0];
+                lvl = eval(Oid_lvl)[1];
+                blkLyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][lvl];
+                level = [eLevel, dLevel, cLevel, bLevel][lvl];
+                for(i in blkLyr._layers){
+                    f = blkLyr._layers[i].feature.properties;
                     if(f.OBJECTID == Oid){
                         cntnt =  "<b>Place: </b>" + f.PlaceName + "<br>"
                         cntnt += "<b>Person: </b>" + f.PersonName + "<br>"
                         cntnt += "<b>Contact: </b>" + f.Contact + "<br>"
                         cntnt += "<b>Email: </b>" + f.Email + "<br>"
-                        cntnt += "<b>Other Info: </b><br>" + f.Details.replace(/,/g, "<br>")
+                        if(f.Details != null) {
+                            cntnt += "<b>Other Info: </b><br>" + f.Details.replace(/,/g, "<br>")
+                        }
                         $("#srchResult").html(cntnt);
-                        EblkLyr._layers[i].setStyle(selectStyle())
-                        eLevel.fitBounds(EblkLyr._layers[i]._bounds);
+                        blkLyr._layers[i].setStyle(selectStyle());
+                        blkLyr._layers[i].openPopup();
+                        level.fitBounds(blkLyr._layers[i]._bounds);
                         break;
                     }
                 }
+                $( '.carouselMap' ).slickGoTo( lvl );
             }
     });
 }
@@ -180,16 +269,8 @@ function routeFromTo(){
     });
 }
 
-function routeClick() {
-    $.ajax({url: "{% url 'SolveNetwork' %}",
-            headers: {"X-CSRFToken": '{{ csrf_token }}'},
-            type: "POST",
-            data: {from:stops[0], to:stops[1]},
-            success: routeFunc
-    });
-}
 
-// Generate route
+// Generate route (necessary for routeFromTo function)
 function routeFunc(i){
 
     extnt_pts = eval(i);
@@ -197,12 +278,12 @@ function routeFunc(i){
     // Highlight Blocks
     for(i in EblkLyr._layers){
         blk = EblkLyr._layers[i];
-        if($.inArray(blk.feature.properties.OBJECTID,extnt_pts[2])!=-1){
+        if($.inArray(blk.feature.properties.OBJECTID,extnt_pts[2]) != -1){
             blk.setStyle(selectStyle())
         }
     }
 
-    // Create markers and zoom to highlighted blocks
+    // Create markers and zoom to highlighted blocks extent
     bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
               [extnt_pts[0][1], extnt_pts[0][0]]];
     for(pt of extnt_pts[1]){
@@ -215,45 +296,52 @@ function routeFunc(i){
 
 // Reset page
 function clearFunc() {
-    stops=[], markerArray=[];
-    EblkLyr.setStyle(styleFunc());
-    eLevel.setZoom(2.45);
+    markerArray=[];
     $("#searchBox").val(''); $("#from").val(''); $("#to").val('');
     $("#searchBox").focus(); $("#from").focus();
-    $("#srchResult").html("");
-    $("#directions").hide();
+    resetStyle()
     eLevel.removeLayer(markerGroup);
+}
+
+function resetStyle(){
+    $("#directions").hide();
+    $("#srchResult").html("");
+    EblkLyr.setStyle(styleFunc());
+    DblkLyr.setStyle(styleFunc());
+    CblkLyr.setStyle(styleFunc());
+    BblkLyr.setStyle(styleFunc());
+    eLevel.setZoom(2.45);
+    dLevel.setZoom(2.45);
+    cLevel.setZoom(2.45);
+    bLevel.setZoom(2.45);
+    eLevel.closePopup();
+    dLevel.closePopup();
+    cLevel.closePopup();
+    bLevel.closePopup();
 }
 
 
 // ----------------------------- Leaflet --------------------------------------
 
-let stops=[], markerArray = []; // Global
+let markerArray = []; // Global
 
 function onEachFeatureFunc(feature, layer){
 
-   // Popup Content
-   var content = "";
-   content += "<b>Name: </b>" + feature.properties.PersonName + "<br>";
-   content += "<b>Place: </b>" + feature.properties.PlaceName;
-   layer.bindPopup(content);
-   layer.on('mouseover', function(f) {layer.openPopup();});
-   layer.on('mouseout', function(f) {layer.closePopup();});
-   layer.off('click', this.openPopup);
-
-   // Highlight selected and keep track of the selected
-   layer.on('click', function(f) {
-       placeNode = f.target.feature.properties.PlaceNode;
-       if (f.target.options.color=="#00FFFF"){
-            EblkLyr.resetStyle(f.target);
-            stops.splice(stops.indexOf(placeNode),1);
-        } else {
-            f.target.setStyle(selectStyle());
-            stops.push(placeNode);
-            if(stops.length==2){ routeClick(); }
-        }
- });
+    // Popup Content
+    var content = "";
+    content += "<b>Name: </b>" + feature.properties.PersonName + "<br>";
+    content += "<b>Place: </b>" + feature.properties.PlaceName;
+    layer.bindPopup(content);
+    layer.on('mouseover', function(f) { f.target.setStyle(selectStyle()) });
+    layer.on('mouseout', function(f) { f.target.setStyle(styleFunc()); layer.closePopup() });
+    // layer.off('click', this.openPopup);
 }
+
+// Icon for the route
+var footpath = L.icon({
+    iconUrl: "{% static 'HeadHall/images/walking.png' %}",
+    iconSize: [20,20]
+});
 
 function styleFunc() { return {weight:0.2, fillOpacity:0, opacity:0.5, color:"red"} }
 function selectStyle() {return {color:"#00FFFF", fillOpacity:0.5}}
@@ -267,17 +355,29 @@ levelConfig = { minZoom: 2.45,
 }
 var bounds = [[0, 0], [90, 180]];
 
-// Icon for the route
-var footpath = L.icon({
-    iconUrl: "{% static 'HeadHall/images/walking.png' %}",
-    iconSize: [20,20]
-});
-
 // E-Level
 url = "{% static 'HeadHall/baseimages/E_Level.png' %}";
 var eLevel = L.map('ELevel', levelConfig);
 L.imageOverlay(url, bounds).addTo(eLevel);
 eLevel.fitBounds(bounds);
+
+// D-Level
+url = "{% static 'HeadHall/baseimages/D_Level.jpg' %}";
+var dLevel = L.map('DLevel', levelConfig);
+L.imageOverlay(url, bounds).addTo(dLevel);
+dLevel.fitBounds(bounds);
+
+// C-Level
+url = "{% static 'HeadHall/baseimages/C_Level.jpg' %}";
+var cLevel = L.map('CLevel', levelConfig);
+L.imageOverlay(url, bounds).addTo(cLevel);
+cLevel.fitBounds(bounds);
+
+// B-Level
+url = "{% static 'HeadHall/baseimages/B_Level.jpg' %}";
+var bLevel = L.map('BLevel', levelConfig);
+L.imageOverlay(url, bounds).addTo(bLevel);
+bLevel.fitBounds(bounds);
 
 </script>
 
