@@ -5,6 +5,7 @@ from django.contrib.gis.gdal import DataSource
 # Project imports
 from indoorGIS.settings import STATIC_ROOT as static
 from .models import ELevel, DLevel, CLevel, BLevel
+from .categories import categorize
 
 # Module imports
 from os.path import join
@@ -14,6 +15,7 @@ import networkx as nx
 # For reading SHP files
 HeadHall = join(static, "HeadHall", "SHPs")
 blks = [join(HeadHall, "%s_Level_Blocks" % i) for i in "EDCB"]
+lvls = [(ix, "%s Level" % i) for ix, i in enumerate("EDCB")]
 
 
 # Rounding function for geom coordinates
@@ -58,6 +60,12 @@ def loadFields(request):
             allFlds.append({'value': '%s: %s' % (k, val),
                             'label': val})
     return HttpResponse(str(sorted(allFlds, key=lambda x: x["label"])))
+
+
+def loadCategories(request):
+
+    html = [categorize(blk, *lvl) for blk, lvl in zip(blks, lvls)]
+    return HttpResponse("".join(html))
 
 
 def loadJSON(request):

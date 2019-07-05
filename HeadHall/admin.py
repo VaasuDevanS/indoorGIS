@@ -6,4 +6,4 @@ from .models import ELevel, DLevel, CLevel, BLevel
 class LevelAdmin(admin.ModelAdmin):
     list_display = ('OBJECTID',
                     'PlaceName', 'PersonName', 'Contact', 'Email', 'Details',
-                    'PlaceNode',)
+                    'PlaceNode', 'PlaceType')

@@ -29,6 +29,7 @@ urlpatterns = [
     # Functionalities
     path('solve/', views.solve_network, name='SolveNetwork'),
     path('loadFields', views.loadFields, name='loadFields'),
+    path('loadCategories', views.loadCategories, name='loadCategories'),
     path('loadJSON', views.loadJSON, name='loadJSON'),
     path('searchBox', views.searchBox, name='searchBox'),
     path('from_to_route', views.from_to_route, name='from_to_route'),

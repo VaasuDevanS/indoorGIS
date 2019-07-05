@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{% static 'HeadHall/css/leaflet.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/jquery-ui.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/slick.css' %}"/>
+    <link rel="stylesheet" href="{% static 'HeadHall/css/metisMenu.min.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 
     <title> indoorGIS: HeadHall </title>
     <link rel="icon" href="{% static 'HeadHall/images/GISIcon.ico' %}">
@@ -48,6 +50,40 @@
         }
         /*.slick-prev:after { content: "<"; color: black; font-size: 30px; }*/
         /*.slick-next:before { content: ">"; color: black; font-size: 30px; }*/
+        .categories {
+            padding-left: 20px;
+        }
+        .categories, .categories ul {
+            list-style: none;
+        }
+        .categories li {
+            position: relative;
+        }
+        .categories li a {
+            display: block;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            color: #333;
+            text-decoration: none;
+            outline: 0 none;
+        }
+        .categories ul:before {
+            position: absolute;
+            border-left: 1px dotted #333;
+            content: "";
+            width: 30px;
+            top: 25px;
+            left: 5px;
+            bottom: 17px;
+        }
+        .categories ul > li:before {
+            position: absolute;
+            border-top: 1px dotted #333;
+            content: "";
+            width: 30px;
+            top: 13px;
+            left: -33px;
+        }
     </style>
 
 </head>
@@ -57,10 +93,12 @@
     <script src="{% static 'HeadHall/js/bootstrap.min.js' %}"> </script>
     <script src="{% static 'HeadHall/js/leaflet.js' %}"> </script>
     <script src="{% static 'HeadHall/js/slick.min.js' %}"> </script>
+    <script src="{% static 'HeadHall/js/metismenu.js' %}"></script>
 
-    <div style="float:left; padding-top:3%; padding-left:2.6%">
-        <img id="srchBtn" title="Search" src="{% static 'HeadHall/images/Search-icon.png' %}"> &emsp;&emsp;
-        <img id="rteBtn" title="Directions" src="{% static 'HeadHall/images/directions-icon.png' %}"> &emsp;&emsp;
+    <div style="float:left; padding-top:2%; padding-left:2.6%">
+        <img id="srchBtn" title="Search" src="{% static 'HeadHall/images/search-icon.png' %}"> &emsp;
+        <img id="rteBtn" title="Routing" src="{% static 'HeadHall/images/directions-icon.png' %}"> &emsp;
+        <img id="catBtn" title="Categories" src="{% static 'HeadHall/images/categories-icon.png' %}" width=65 height=65> &emsp;
         <img title="Clear" src="{% static 'HeadHall/images/clear.png' %}" onclick="clearFunc()">
         <br><br><br>
         <div id="srch" hidden>
@@ -78,6 +116,11 @@
             <br><br>
             <button id="swap"> Swap </button> &emsp;
             <button onclick="routeFromTo()"> Show Route </button>
+        </div>
+        <div id="cat" style="overflow-y: auto; height:80%;" hidden>
+            <ul class="categories">
+                <div id="catContent">  </div>
+            </ul>
         </div>
     </div>
 
@@ -113,7 +156,7 @@
 				    <img src="{% static 'HeadHall/images/UNBLogo.jpg' %}" width=200 height=100>
 				    <img src="{% static 'HeadHall/images/GGELogo.gif' %}" width=100 height=100> <br> <br>
 					<b> Directed Research Project - 2019 </b><br>
-					WebApp for finding Faculties, Route between faculties and more <br>
+					WebApp for finding Faculties, Facilities, Routing and more <br>
 					Supervisor: <a href="https://www.unb.ca/faculty-staff/directory/engineering-geomatics/jabari-shabnam.html" target="_blank">Shabnam Jabari</a><br>
 					Developer: <a href="https://vaasudevans.github.io/" target="_blank">Vaasudevan Srinivasan</a> <br> <br>
 					<a href="https://www.unb.ca/" target="_blank">UNB Homepage</a> |
@@ -129,70 +172,89 @@
 
 <script>
 
-$(function(){
+$(function() {
 
     $(".carouselMap").slick({
         draggable: false,
         arrows: false
     });
-    $(".menu a").click(function(e){
+    $(".menu a").click(function(e) {
         e.preventDefault();
         slideIndex = $(this).index();
         $( '.carouselMap' ).slickGoTo( parseInt(slideIndex) );
     });
 
     // http://output.jsbin.com/uloli3/63
-    $("#srchReset").click(function(){
+    $("#srchReset").click(function() {
         $("#searchBox").val("").focus();
         resetStyle();
     })
-    $("#fromReset").click(function(){
+    $("#fromReset").click(function() {
         markerArray = [];
         EblkLyr.setStyle(styleFunc());
         $("#from").val("").focus();
         eLevel.removeLayer(markerGroup);
     })
-    $("#toReset").click(function(){
+    $("#toReset").click(function() {
         markerArray = [];
         EblkLyr.setStyle(styleFunc());
         $("#to").val("").focus()
         eLevel.removeLayer(markerGroup);
     })
 
-    $("#srchBtn").click(function(){
+    function hideAll () {
         $("#rte").hide();
+        $("#srch").hide();
+        $("#cat").hide();
+    }
+    $("#srchBtn").click(function() {
+        hideAll();
         $("#srch").show();
         $("#searchBox").focus();
     })
-    $("#directions").click(function(){
-        $("#srch").hide();
+    $("#directions").click(function() {
+        hideAll();
         $("#rte").show();
         $("#from").focus();
         $("#to").val($("#searchBox").val())
     })
-    $("#rteBtn").click(function(){
-        $("#srch").hide();
+    $("#rteBtn").click(function() {
+        hideAll();
         $("#rte").show();
         $("#from").focus();
     })
-    $("#swap").click(function(){
+    $("#swap").click(function() {
         temp = $("#to").val();
-        $("#to").val($("#from").val()); $("#from").val(temp);
+        $("#to").val($("#from").val());
+        $("#from").val(temp);
+    })
+    $("#catBtn").click(function() {
+        hideAll();
+        $("#cat").show();
     })
 
     $.ajax({url: "{% url 'loadFields' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
-            success: function(flds){
+            success: function(flds) {
                 $("input[type=text]").autocomplete({
                     source: eval(flds),
                     minLength:2
                 });
                 tmpFlds = [];
-                for(i in eval(flds)){
+                for (i in eval(flds)) {
                     tmpFlds.push(" "+eval(flds)[i].label)
                 }
                 $("#fields").html("<b>Search/Route for: </b>" + tmpFlds)
+            }
+    });
+
+    $.ajax({url: "{% url 'loadCategories' %}",
+            headers: {"X-CSRFToken": '{{ csrf_token }}'},
+            type: "POST",
+            success: function(catContent) {
+                $("#catContent").html(catContent);
+                $('.categories').metisMenu({ toggle: true });
             }
     });
 
@@ -200,7 +262,7 @@ $(function(){
     $.ajax({url: "{% url 'loadJSON' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
-            success: function(Blocks){
+            success: function(Blocks) {
                 allBlks = eval(Blocks)
                 // E-Level
                 EblkLyr = L.geoJSON(JSON.parse(allBlks[0]), {
@@ -227,40 +289,52 @@ $(function(){
 
 });
 
-function search(){
+function search() {
     $("#directions").show();
     $.ajax({url: "{% url 'searchBox' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
             data: {keyword: $("#searchBox").val()},
-            success: function(Oid_lvl){
-                Oid = eval(Oid_lvl)[0];
-                lvl = eval(Oid_lvl)[1];
-                blkLyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][lvl];
-                level = [eLevel, dLevel, cLevel, bLevel][lvl];
-                for(i in blkLyr._layers){
-                    f = blkLyr._layers[i].feature.properties;
-                    if(f.OBJECTID == Oid){
-                        cntnt =  "<b>Place: </b>" + f.PlaceName + "<br>"
-                        cntnt += "<b>Person: </b>" + f.PersonName + "<br>"
-                        cntnt += "<b>Contact: </b>" + f.Contact + "<br>"
-                        cntnt += "<b>Email: </b>" + f.Email + "<br>"
-                        if(f.Details != null) {
-                            cntnt += "<b>Other Info: </b><br>" + f.Details.replace(/,/g, "<br>")
-                        }
-                        $("#srchResult").html(cntnt);
-                        blkLyr._layers[i].setStyle(selectStyle());
-                        blkLyr._layers[i].openPopup();
-                        level.fitBounds(blkLyr._layers[i]._bounds);
-                        break;
-                    }
-                }
-                $( '.carouselMap' ).slickGoTo( lvl );
-            }
+            success: searchFunc
     });
 }
 
-function routeFromTo(){
+function searchFunc(Oid_lvl) {
+    Oid = eval(Oid_lvl)[0];
+    lvl = eval(Oid_lvl)[1];
+    blkLyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][lvl];
+    level = [eLevel, dLevel, cLevel, bLevel][lvl];
+    for (i in blkLyr._layers) {
+        f = blkLyr._layers[i].feature.properties;
+        if (f.OBJECTID == Oid) {
+            cntnt = "";
+            if (f.PersonName != null) {
+                cntnt += "<i class='fas fa-user-alt'></i> " + f.PersonName + "<br>" }
+            if (f.PlaceName != null) {
+                cntnt +=  "<i class='fas fa-map-marker-alt'></i> " + f.PlaceName + "<br>" }
+            if (f.Contact != null) {
+                cntnt += "<i class='fas fa-mobile'></i> " + f.Contact + "<br>" }
+            if (f.Email != null) {
+                cntnt += "<i class='fas fa-envelope'></i> " + f.Email + "<br>" }
+            if (f.Details != null) {
+                cntnt += "<b>Other Info: </b><br>" +
+                          f.Details.replace(/,/g, "<br>") }
+            if ($("#searchBox").val() != "") {
+                $("#srchResult").html(cntnt); }
+            EblkLyr.setStyle(styleFunc());
+            DblkLyr.setStyle(styleFunc());
+            CblkLyr.setStyle(styleFunc());
+            BblkLyr.setStyle(styleFunc());
+            blkLyr._layers[i].setStyle(selectStyle());
+            blkLyr._layers[i].openPopup();
+            level.fitBounds(blkLyr._layers[i]._bounds.pad(-2));
+            break;
+        }
+    }
+    $( '.carouselMap' ).slickGoTo( lvl );
+}
+
+function routeFromTo() {
     $.ajax({url: "{% url 'from_to_route' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
@@ -271,14 +345,14 @@ function routeFromTo(){
 
 
 // Generate route (necessary for routeFromTo function)
-function routeFunc(i){
+function routeFunc(i) {
 
     extnt_pts = eval(i);
 
     // Highlight Blocks
-    for(i in EblkLyr._layers){
+    for (i in EblkLyr._layers) {
         blk = EblkLyr._layers[i];
-        if($.inArray(blk.feature.properties.OBJECTID,extnt_pts[2]) != -1){
+        if ($.inArray(blk.feature.properties.OBJECTID,extnt_pts[2]) != -1) {
             blk.setStyle(selectStyle())
         }
     }
@@ -286,7 +360,7 @@ function routeFunc(i){
     // Create markers and zoom to highlighted blocks extent
     bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
               [extnt_pts[0][1], extnt_pts[0][0]]];
-    for(pt of extnt_pts[1]){
+    for (pt of extnt_pts[1]) {
         markerArray.push(L.marker(pt, {icon: footpath}));
         bounds.push(pt);
     }
@@ -299,11 +373,11 @@ function clearFunc() {
     markerArray=[];
     $("#searchBox").val(''); $("#from").val(''); $("#to").val('');
     $("#searchBox").focus(); $("#from").focus();
-    resetStyle()
+    resetStyle();
     eLevel.removeLayer(markerGroup);
 }
 
-function resetStyle(){
+function resetStyle() {
     $("#directions").hide();
     $("#srchResult").html("");
     EblkLyr.setStyle(styleFunc());
@@ -325,12 +399,14 @@ function resetStyle(){
 
 let markerArray = []; // Global
 
-function onEachFeatureFunc(feature, layer){
+function onEachFeatureFunc(feature, layer) {
 
     // Popup Content
     var content = "";
-    content += "<b>Name: </b>" + feature.properties.PersonName + "<br>";
-    content += "<b>Place: </b>" + feature.properties.PlaceName;
+    if (feature.properties.PersonName != null) {
+        content += "<i class='fas fa-user-alt'></i> " + feature.properties.PersonName + "<br>"; }
+    if (feature.properties.PlaceName != null) {
+        content += "<i class='fas fa-map-marker-alt'></i> " + feature.properties.PlaceName; }
     layer.bindPopup(content);
     layer.on('mouseover', function(f) { f.target.setStyle(selectStyle()) });
     layer.on('mouseout', function(f) { f.target.setStyle(styleFunc()); layer.closePopup() });
@@ -344,7 +420,7 @@ var footpath = L.icon({
 });
 
 function styleFunc() { return {weight:0.2, fillOpacity:0, opacity:0.5, color:"red"} }
-function selectStyle() {return {color:"#00FFFF", fillOpacity:0.5}}
+function selectStyle() { return {color:"#00FFFF", fillOpacity:0.5} }
 
 levelConfig = { minZoom: 2.45,
                 maxZoom: 5,

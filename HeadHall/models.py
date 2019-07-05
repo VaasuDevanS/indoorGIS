@@ -18,6 +18,7 @@ class Level(models.Model):
     Contact = models.CharField(max_length=20, null=True, blank=True)
     Email = models.CharField(max_length=50, null=True, blank=True)
     Details = models.CharField(max_length=200, null=True, blank=True)
+    PlaceType = models.CharField(max_length=200, null=True, blank=True)
     geometry = models.TextField(editable=False)
 
     class Meta:
@@ -33,7 +34,7 @@ class Level(models.Model):
 
         # Get the record from eBlocks
         flds = ["PlaceNode", "PlaceName", "PersonName",
-                "Contact", "Email", "Details"]
+                "Contact", "Email", "Details", "PlaceType"]
         eBlkRcrd = self.blks[oID == self.OBJECTID][flds]
 
         # Construct a new dataframe from the passed object
