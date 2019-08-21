@@ -1,6 +1,6 @@
 # indoorGIS
 
-[University of New Brunswick, Fredericton](https://www.unb.ca/)
+[University of New Brunswick, Fredericton](https://www.unb.ca/) | [Web-App Link](https://indoorgis.pythonanywhere.com/)
 
 Directed Research Project - Summer (2019) <br />
 Study Area: HeadHall - [Link](https://www.google.com/maps/place/Head+Hall,+NB-1,+Fredericton,+NB/@45.9496034,-66.6424096,18.75z/data=!4m5!3m4!1s0x4ca4220f063c4685:0xd90a16a19db56df7!8m2!3d45.949433!4d-66.6421681 "View in Google Maps")
@@ -28,6 +28,14 @@ gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level
 ```
 
 ### Commit log
+***
+
+**Commit 5 - v4.0 (July , 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v4.0.mp4)
+* Statistics Model for understanding the app usage
+* SHP (Blocks, Route, Places) for all the rooms (TODO)
+* Routing through all the levels (TODO)
+* Fixed the shortest path through the blocks issue (TODO)
+
 ***
 
 **Commit 4 - v3.1 (July 5, 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v3.1.mp4)

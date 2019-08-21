@@ -5,8 +5,9 @@ from django.db import models
 from indoorGIS.settings import STATIC_ROOT as static
 
 # Module imports
-import geopandas as gpd
+from datetime import datetime
 from os.path import join
+import geopandas as gpd
 
 
 class Level(models.Model):
@@ -84,6 +85,17 @@ class BLevel(Level):
 
     blkFile = join(static, "HeadHall", "SHPs", "B_Level_Blocks")
     blks = gpd.read_file(blkFile)
+
+
+class Stat(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Statistics"
+
+    created_at = models.DateTimeField(default=datetime.now)
+    functionality = models.CharField(max_length=50)
+    keyword = models.CharField(max_length=200)
+    returned = models.BooleanField()
 
 
 # EOF

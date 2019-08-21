@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'HeadHall/css/jquery-ui.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/slick.css' %}"/>
     <link rel="stylesheet" href="{% static 'HeadHall/css/metisMenu.min.css' %}">
+    <link rel="stylesheet" href="{% static 'HeadHall/css/toggle-switch.css' %}" /> <!-- https://ghinda.net/css-toggle-switch/ -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 
     <title> indoorGIS: HeadHall </title>
@@ -22,7 +23,7 @@
         input[type=text] {
             border: none;
             border-bottom: 1px solid purple;
-            width: 270px;
+            width: 280px;
             background-color: #F5F5F5;
         }
         img:hover {
@@ -84,6 +85,14 @@
             top: 13px;
             left: -33px;
         }
+        #lsteps, #llift {
+            cursor: pointer;
+        }
+        .leaflet-tooltip.labelstyle {
+            background-color: transparent;
+            border: transparent;
+            box-shadow: none;
+        }
     </style>
 
 </head>
@@ -104,7 +113,7 @@
         <div id="srch" hidden>
             <input type="text" id="searchBox" /> <input type="reset" id="srchReset" value="" />
             <br><br>
-            <button onclick="search()"> Find </button> &emsp;
+            <button class="btn btn-primary" onclick="search()"> Find </button> &emsp;
             <button id="directions" hidden> Directions </button>
             <br><br>
             <div id="srchResult"> </div>
@@ -114,8 +123,17 @@
             <br><br>
             To &emsp;&emsp; <input type="text" id="to" /> <input type="reset" id="toReset" value="" />
             <br><br>
-            <button id="swap"> Swap </button> &emsp;
-            <button onclick="routeFromTo()"> Show Route </button>
+            <div style="display:flex; height:3.2%">
+                <button class="btn btn-default" id="swap"> Swap </button> &emsp;
+                <button class="btn btn-primary" onclick="routeFromTo()"> Show Route </button> &emsp;
+                <div id="steps_lift" class="switch-toggle switch-candy switch-candy-blue" style="width:36%">
+                    <input id="steps" value="Steps" name="mode" type="radio" checked>
+                    <label id="lsteps" for="steps" onclick="">Steps</label>
+                    <input id="lift" value="Lift" name="mode" type="radio">
+                    <label id="llift" for="lift" onclick="">Lift</label>
+                    <a></a>
+                </div>
+            </div>
         </div>
         <div id="cat" style="overflow-y: auto; height:80%;" hidden>
             <ul class="categories">
@@ -124,14 +142,13 @@
         </div>
     </div>
 
-    <div class="container" style="padding-left:40px">
+    <div class="container" style="padding-left:46px">
         <center> <br><br>
-            <div id="fields"> </div> <br> <br>
             <div class="carouselMap">
                 <div> <div id="ELevel" style="width:87%;height:100%"> </div> </div>
                 <div> <div id="DLevel" style="width:90%;height:100%"> </div> </div>
                 <div> <div id="CLevel" style="width:87%;height:100%"> </div> </div>
-                <div> <div id="BLevel" style="width:87%;height:100%"> </div> </div>
+                <div> <div id="BLevel" style="width:88%;height:100%"> </div> </div>
             </div>
             <div class="menu">
                 <a href="#">E Level</a> |
@@ -140,7 +157,8 @@
                 <a href="#">B Level</a>
             </div>
             <a href="#about" data-toggle="modal">About</a> -
-            <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a>
+            <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a> -
+            <a href="#features" data-toggle="modal">Features</a>
         </center>
     </div> <br>
 
@@ -169,14 +187,34 @@
 		</div>
 	</div>
 
+	<div id="features" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Search / Route for</h4>
+				</div>
+				<div class="modal-body">
+				    <div id="fields" style="overflow: auto; height: 60%"> </div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 <script>
 
 $(function() {
 
     $(".carouselMap").slick({
+        accessibility: false,
         draggable: false,
-        arrows: false
+        arrows: false,
+        touchMove: false
     });
     $(".menu a").click(function(e) {
         e.preventDefault();
@@ -243,9 +281,9 @@ $(function() {
                 });
                 tmpFlds = [];
                 for (i in eval(flds)) {
-                    tmpFlds.push(" "+eval(flds)[i].label)
+                    tmpFlds.push(eval(flds)[i].label+"<br>")
                 }
-                $("#fields").html("<b>Search/Route for: </b>" + tmpFlds)
+                $("#fields").html(tmpFlds)
             }
     });
 
@@ -334,11 +372,15 @@ function searchFunc(Oid_lvl) {
     $( '.carouselMap' ).slickGoTo( lvl );
 }
 
+
 function routeFromTo() {
     $.ajax({url: "{% url 'from_to_route' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
             type: "POST",
-            data: {from: $("#from").val(), to:$("#to").val()},
+            data: {from: $("#from").val(),
+                   to: $("#to").val(),
+                   mode: $("input[name='mode']:checked").val()
+            },
             success: routeFunc
     });
 }
@@ -349,23 +391,30 @@ function routeFunc(i) {
 
     extnt_pts = eval(i);
 
-    // Highlight Blocks
-    for (i in EblkLyr._layers) {
-        blk = EblkLyr._layers[i];
-        if ($.inArray(blk.feature.properties.OBJECTID,extnt_pts[2]) != -1) {
-            blk.setStyle(selectStyle())
-        }
-    }
-
     // Create markers and zoom to highlighted blocks extent
     bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
               [extnt_pts[0][1], extnt_pts[0][0]]];
+
     for (pt of extnt_pts[1]) {
         markerArray.push(L.marker(pt, {icon: footpath}));
         bounds.push(pt);
     }
-    markerGroup = L.featureGroup(markerArray).addTo(eLevel);
-    eLevel.fitBounds(bounds);
+
+    level = [eLevel, dLevel, cLevel, bLevel][extnt_pts[3]]
+    lyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][extnt_pts[3]]
+
+    // Highlight Blocks
+    for (i in lyr._layers) {
+        blk = lyr._layers[i];
+        if ($.inArray(blk.feature.properties.OBJECTID, extnt_pts[2]) != -1) {
+            blk.setStyle(selectStyle())
+        }
+    }
+
+    markerGroup = L.featureGroup(markerArray).addTo(level);
+    level.fitBounds(bounds);
+
+    $( '.carouselMap' ).slickGoTo( extnt_pts[3] );
 }
 
 // Reset page
@@ -375,6 +424,9 @@ function clearFunc() {
     $("#searchBox").focus(); $("#from").focus();
     resetStyle();
     eLevel.removeLayer(markerGroup);
+    dLevel.removeLayer(markerGroup);
+    cLevel.removeLayer(markerGroup);
+    bLevel.removeLayer(markerGroup);
 }
 
 function resetStyle() {
@@ -401,6 +453,14 @@ let markerArray = []; // Global
 
 function onEachFeatureFunc(feature, layer) {
 
+    // Tooltip (Labelling)
+    layer.bindTooltip(feature.properties.PlaceNode.toString(),
+                      {direction: "center",
+                       permanent: true,
+                       className: 'labelstyle'
+                      }).openTooltip();
+    $('.leaflet-tooltip').css("font-size", 10);
+
     // Popup Content
     var content = "";
     if (feature.properties.PersonName != null) {
@@ -412,6 +472,7 @@ function onEachFeatureFunc(feature, layer) {
     layer.on('mouseout', function(f) { f.target.setStyle(styleFunc()); layer.closePopup() });
     // layer.off('click', this.openPopup);
 }
+
 
 // Icon for the route
 var footpath = L.icon({

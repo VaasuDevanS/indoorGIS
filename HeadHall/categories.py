@@ -49,9 +49,10 @@ def categorize(blkFile, lvl_ix, lvl):
     # Facilities
     html += "<li> <a href='#'> %s Facilities </a> <ul>" % archive
     query_res = blk[blk.PlaceType.str.startswith("Facility", na=False)]
-    result = query_res[["OBJECTID", "PlaceName", "PlaceType"]]
+    flds = ["OBJECTID", "PlaceName", "PlaceType"]
+    result = (query_res[flds]).itertuples(index=False, name=None)
 
-    for oId, name, facility in result.itertuples(index=False, name=None):
+    for oId, name, facility in sorted(result, key=lambda x: x[1]):
         icon = fac[facility.split(",")[1]]
         a = """<a href='#' onclick="searchFunc('%s')">""" % [oId, lvl_ix]
         html += "<li> %s %s &nbsp; %s </a> </li>" % (a, icon, name)
