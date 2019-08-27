@@ -7,10 +7,19 @@
     <link rel="stylesheet" href="{% static 'HeadHall/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/leaflet.css' %}" />
     <link rel="stylesheet" href="{% static 'HeadHall/css/jquery-ui.css' %}" />
-    <link rel="stylesheet" href="{% static 'HeadHall/css/slick.css' %}"/>
     <link rel="stylesheet" href="{% static 'HeadHall/css/metisMenu.min.css' %}">
     <link rel="stylesheet" href="{% static 'HeadHall/css/toggle-switch.css' %}" /> <!-- https://ghinda.net/css-toggle-switch/ -->
+    <link rel="stylesheet" href="{% static 'HeadHall/css/w3.css' %}">
+    <link rel="stylesheet" href="{% static 'HeadHall/css/w3-theme-teal.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+
+    <link rel="stylesheet"
+          media="screen and (min-width: 300px) and (max-width: 800px)"
+          href="{% static 'HeadHall/css/screen_sizes/mobile-layout.css' %}" />
+
+    <link rel="stylesheet"
+          media="screen and (min-width: 801px)"
+          href="{% static 'HeadHall/css/screen_sizes/desktop-layout.css' %}" />
 
     <title> indoorGIS: HeadHall </title>
     <link rel="icon" href="{% static 'HeadHall/images/GISIcon.ico' %}">
@@ -23,7 +32,7 @@
         input[type=text] {
             border: none;
             border-bottom: 1px solid purple;
-            width: 280px;
+            width: 300px;
             background-color: #F5F5F5;
         }
         img:hover {
@@ -40,19 +49,15 @@
             cursor: pointer;
             position: relative;
             top: -3px;
-            left: -44px;
+            left: -40px;
         }
-        #toReset {
-            left: -41px;
+        #lsteps, #llift {
+            cursor: pointer;
         }
-        .carouselMap {
-            width: 100%;
-            height: 53.2%;
-        }
-        /*.slick-prev:after { content: "<"; color: black; font-size: 30px; }*/
-        /*.slick-next:before { content: ">"; color: black; font-size: 30px; }*/
-        .categories {
-            padding-left: 20px;
+        .leaflet-tooltip.labelstyle {
+            background-color: transparent;
+            border: transparent;
+            box-shadow: none;
         }
         .categories, .categories ul {
             list-style: none;
@@ -85,142 +90,206 @@
             top: 13px;
             left: -33px;
         }
-        #lsteps, #llift {
-            cursor: pointer;
+        .w3-white {
+            background-color:#F5F5F5 !important;
         }
-        .leaflet-tooltip.labelstyle {
-            background-color: transparent;
-            border: transparent;
-            box-shadow: none;
+        a {
+            color: blue;
+            text-decoration: underline blue;
+        }
+        .carousel-inner .item {
+            -webkit-transition-duration: 0.4s;
+            -moz-transition-duration: 0.4s;
+            -o-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+        }
+        .categories {
+            padding-left: 20px;
         }
     </style>
 
 </head>
 <body style="background-color:#F5F5F5">
+
     <script src="{% static 'HeadHall/js/jquery-3.3.1.js' %}"> </script>
     <script src="{% static 'HeadHall/js/jquery-ui.js' %}"> </script>
     <script src="{% static 'HeadHall/js/bootstrap.min.js' %}"> </script>
     <script src="{% static 'HeadHall/js/leaflet.js' %}"> </script>
-    <script src="{% static 'HeadHall/js/slick.min.js' %}"> </script>
     <script src="{% static 'HeadHall/js/metismenu.js' %}"></script>
+    <script src="{% static 'HeadHall/js/w3codecolor.js' %}"></script>
 
-    <div style="float:left; padding-top:2%; padding-left:2.6%">
-        <img id="srchBtn" title="Search" src="{% static 'HeadHall/images/search-icon.png' %}"> &emsp;
-        <img id="rteBtn" title="Routing" src="{% static 'HeadHall/images/directions-icon.png' %}"> &emsp;
-        <img id="catBtn" title="Categories" src="{% static 'HeadHall/images/categories-icon.png' %}" width=65 height=65> &emsp;
-        <img title="Clear" src="{% static 'HeadHall/images/clear.png' %}" onclick="clearFunc()">
-        <br><br><br>
-        <div id="srch" hidden>
-            <input type="text" id="searchBox" /> <input type="reset" id="srchReset" value="" />
+    <div class="w3-sidebar w3-collapse w3-white w3-animate-left w3-large" style="z-index:3;width:375px;border:1px groove black" id="mySidebar">
+
+        <div class="w3-bar w3-black w3-center">
+            <a class="w3-bar-item w3-button" style="width:25%" href="javascript:void(0)" id="nav01i" onclick="openNav('nav01')">
+            <img title="Search" src="{% static 'HeadHall/images/search-icon.png' %}"></a>
+
+            <a class="w3-bar-item w3-button" style="width:25%" href="javascript:void(0)" id="nav02i" onclick="openNav('nav02')">
+            <img title="Routing" src="{% static 'HeadHall/images/directions-icon.png' %}"></a>
+
+            <a class="w3-bar-item w3-button" style="width:25%" href="javascript:void(0)" id="nav03i" onclick="openNav('nav03')">
+            <img title="Categories" src="{% static 'HeadHall/images/categories-icon.png' %}" width=65 height=65></a>
+
+            <a class="w3-bar-item w3-button" style="width:25%" href="javascript:void(0)">
+            <img title="Clear" src="{% static 'HeadHall/images/clear.png' %}" onclick="clearFunc()"></a>
+        </div>
+
+        <div id="nav01" class="w3-bar-block" style="background-color:#F5F5F5; padding-left:20px">
+            <a class="w3-button w3-hover-teal w3-hide-large w3-large w3-right" href="javascript:void(0)" onclick="w3_close()">
+            <i class="fas fa-arrow-left"></i></a>
+            <br>
+            Search for <br> <input type="text" id="searchBox" /> <input type="reset" id="srchReset" value=""/>
+            <script>$("#searchBox").focus()</script>
             <br><br>
             <button class="btn btn-primary" onclick="search()"> Find </button> &emsp;
-            <button id="directions" hidden> Directions </button>
+            <button class="btn btn-success" id="directions" hidden> Directions </button>
             <br><br>
             <div id="srchResult"> </div>
         </div>
-        <div id="rte" hidden>
-            From &emsp; <input type="text" id="from" /> <input type="reset" id="fromReset" value="" />
+
+        <div id="nav02" style="background-color:#F5F5F5; padding-left:20px">
+            <a class="w3-button w3-hover-teal w3-hide-large w3-large w3-right" href="javascript:void(0)" onclick="w3_close()">
+            <i class="fas fa-arrow-left"></i></a>
+            <br>
+            From <br> <input type="text" id="from" /> <input type="reset" id="fromReset" value="" />
+            <i class="fas fa-sort" id="swap" style="cursor:pointer; font-size:25px; padding-left:310px; padding-top:20px"></i>
+            <br>
+            To <br> <input type="text" id="to" /> <input type="reset" id="toReset" value="" />
             <br><br>
-            To &emsp;&emsp; <input type="text" id="to" /> <input type="reset" id="toReset" value="" />
-            <br><br>
-            <div style="display:flex; height:3.2%">
-                <button class="btn btn-default" id="swap"> Swap </button> &emsp;
-                <button class="btn btn-primary" onclick="routeFromTo()"> Show Route </button> &emsp;
-                <div id="steps_lift" class="switch-toggle switch-candy switch-candy-blue" style="width:36%">
+            <div style="display:flex">
+                <div id="steps_lift" class="switch-toggle switch-candy switch-candy-blue">
                     <input id="steps" value="Steps" name="mode" type="radio" checked>
                     <label id="lsteps" for="steps" onclick="">Steps</label>
                     <input id="lift" value="Lift" name="mode" type="radio">
                     <label id="llift" for="lift" onclick="">Lift</label>
                     <a></a>
-                </div>
+                </div>  &emsp;
+                <button class="btn btn-primary" onclick="routeFromTo()"> Show Route </button>
             </div>
         </div>
-        <div id="cat" style="overflow-y: auto; height:80%;" hidden>
-            <ul class="categories">
-                <div id="catContent">  </div>
-            </ul>
+
+        <div id="nav03" style="background-color:#F5F5F5; padding-left:20px">
+            <a class="w3-button w3-hover-teal w3-hide-large w3-large w3-right" href="javascript:void(0)" onclick="w3_close()">
+            <i class="fas fa-arrow-left"></i></a>
+            <div id="cat" style="overflow-y: auto">
+              <br>
+              <ul class="categories">
+                  <div id="catContent">  </div>
+              </ul>
+            </div>
         </div>
+
     </div>
 
-    <div class="container" style="padding-left:46px">
-        <center> <br><br>
-            <div class="carouselMap">
-                <div> <div id="ELevel" style="width:87%;height:100%"> </div> </div>
-                <div> <div id="DLevel" style="width:90%;height:100%"> </div> </div>
-                <div> <div id="CLevel" style="width:87%;height:100%"> </div> </div>
-                <div> <div id="BLevel" style="width:88%;height:100%"> </div> </div>
-            </div>
-            <div class="menu">
-                <a href="#">E Level</a> |
-                <a href="#">D Level</a> |
-                <a href="#">C Level</a> |
-                <a href="#">B Level</a>
-            </div>
-            <a href="#about" data-toggle="modal">About</a> -
-            <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a> -
-            <a href="#features" data-toggle="modal">Features</a>
-        </center>
-    </div> <br>
+    <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
+    <div class="w3-main" style="margin-left:100px;">
 
-	<div id="about" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">indoorGIS</h4>
-				</div>
-				<div class="modal-body">
-				    <img src="{% static 'HeadHall/images/UNBLogo.jpg' %}" width=200 height=100>
-				    <img src="{% static 'HeadHall/images/GGELogo.gif' %}" width=100 height=100> <br> <br>
-					<b> Directed Research Project - 2019 </b><br>
-					WebApp for finding Faculties, Facilities, Routing and more <br>
-					Supervisor: <a href="https://www.unb.ca/faculty-staff/directory/engineering-geomatics/jabari-shabnam.html" target="_blank">Shabnam Jabari</a><br>
-					Developer: <a href="https://vaasudevans.github.io/" target="_blank">Vaasudevan Srinivasan</a> <br> <br>
-					<a href="https://www.unb.ca/" target="_blank">UNB Homepage</a> |
-					<a href="https://www.unb.ca/fredericton/engineering/depts/gge/index.html" target="_blank">GGE Homepage</a>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="w3-top w3-theme w3-large w3-hide-large">
+          <i class="fa fa-bars w3-button w3-teal w3-xlarge" onclick="w3_open()"></i>
+          HeadHall - indoorGIS
+        </div>
 
-	<div id="features" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Search / Route for</h4>
-				</div>
-				<div class="modal-body">
-				    <div id="fields" style="overflow: auto; height: 60%"> </div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="container">
+            <center> <br><br>
+                <div id="cmap" class="carousel slide" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                       <div class="item active">
+                           <div id="ELevel"> </div>
+                       </div>
+                       <div class="item">
+                           <div id="DLevel"> </div>
+                       </div>
+                       <div class="item">
+                           <div id="CLevel"> </div>
+                       </div>
+                       <div class="item">
+                           <div id="BLevel"> </div>
+                       </div>
+                     </div>
+                </div>
+                <br>
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(0);eLevel.invalidateSize();">E Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(1);dLevel.invalidateSize();">D Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(2);cLevel.invalidateSize();">C Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(3);bLevel.invalidateSize();">B Level</a>
+                <br>
+                <a href="#about" data-toggle="modal">About</a> -
+                <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a> -
+                <a href="#features" data-toggle="modal">Features</a>
+            </center>
+        </div> <br> <!-- container div close -->
+
+    	<div id="about" class="modal fade">
+    		<div class="modal-dialog">
+    			<div class="modal-content">
+    				<div class="modal-header">
+    					<button type="button" class="close" data-dismiss="modal"
+    						aria-hidden="true">&times;</button>
+    					<h4 class="modal-title">indoorGIS</h4>
+    				</div>
+    				<div class="modal-body">
+    				    <img src="{% static 'HeadHall/images/UNBLogo.jpg' %}" width=200 height=100>
+    				    <img src="{% static 'HeadHall/images/GGELogo.gif' %}" width=100 height=100> <br> <br>
+    					<b> Directed Research Project - 2019 </b><br>
+    					WebApp for finding Faculties, Facilities, Routing and more <br>
+    					Supervisor: <a href="https://www.unb.ca/faculty-staff/directory/engineering-geomatics/jabari-shabnam.html" target="_blank">Shabnam Jabari</a><br>
+    					Developer: <a href="https://vaasudevans.github.io/" target="_blank">Vaasudevan Srinivasan</a> <br> <br>
+    					<a href="https://www.unb.ca/" target="_blank">UNB Homepage</a> |
+    					<a href="https://www.unb.ca/fredericton/engineering/depts/gge/index.html" target="_blank">GGE Homepage</a>
+    				</div>
+    				<div class="modal-footer">
+    					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    				</div>
+    			</div>
+    		</div>
+    	</div> <!-- about modal -->
+
+    	<div id="features" class="modal fade">
+    		<div class="modal-dialog">
+    			<div class="modal-content">
+    				<div class="modal-header">
+    					<button type="button" class="close" data-dismiss="modal"
+    						aria-hidden="true">&times;</button>
+    					<h4 class="modal-title">Search / Route for</h4>
+    				</div>
+    				<div class="modal-body">
+    				    <div id="fields" style="overflow: auto; height: 60%"> </div>
+    				</div>
+    				<div class="modal-footer">
+    					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    				</div>
+    			</div>
+    		</div>
+    	</div> <!-- features modal close -->
+
+	</div> <!-- w3 div close -->
 
 
 <script>
 
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+function openNav(id) {
+  navs = ["nav01", "nav02", "nav03"];
+  for(i=0; i<3; i++){
+      document.getElementById(navs[i]).style.display = "none";
+      $("#"+navs[i]+"i").css("background-color", "black");
+  }
+  document.getElementById(id).style.display = "block";
+  $("#"+id+"i").css("background-color", "#ccc");
+}
+
 $(function() {
 
-    $(".carouselMap").slick({
-        accessibility: false,
-        draggable: false,
-        arrows: false,
-        touchMove: false
-    });
-    $(".menu a").click(function(e) {
-        e.preventDefault();
-        slideIndex = $(this).index();
-        $( '.carouselMap' ).slickGoTo( parseInt(slideIndex) );
-    });
+    openNav("nav01");
 
     // http://output.jsbin.com/uloli3/63
     $("#srchReset").click(function() {
@@ -239,37 +308,17 @@ $(function() {
         $("#to").val("").focus()
         eLevel.removeLayer(markerGroup);
     })
-
-    function hideAll () {
-        $("#rte").hide();
-        $("#srch").hide();
-        $("#cat").hide();
-    }
-    $("#srchBtn").click(function() {
-        hideAll();
-        $("#srch").show();
-        $("#searchBox").focus();
-    })
-    $("#directions").click(function() {
-        hideAll();
-        $("#rte").show();
-        $("#from").focus();
-        $("#to").val($("#searchBox").val())
-    })
-    $("#rteBtn").click(function() {
-        hideAll();
-        $("#rte").show();
-        $("#from").focus();
-    })
     $("#swap").click(function() {
         temp = $("#to").val();
         $("#to").val($("#from").val());
         $("#from").val(temp);
     })
-    $("#catBtn").click(function() {
-        hideAll();
-        $("#cat").show();
+    $("#directions").click(function() {
+        openNav("nav02");
+        $("#from").focus();
+        $("#to").val($("#searchBox").val())
     })
+
 
     $.ajax({url: "{% url 'loadFields' %}",
             headers: {"X-CSRFToken": '{{ csrf_token }}'},
@@ -337,39 +386,50 @@ function search() {
     });
 }
 
+function return_feature(lyr) {
+    for (i in lyr._layers) {
+        f = lyr._layers[i].feature.properties;
+        if (f.OBJECTID == Oid){
+            return [f, i];
+        }
+    }
+}
+
 function searchFunc(Oid_lvl) {
     Oid = eval(Oid_lvl)[0];
     lvl = eval(Oid_lvl)[1];
     blkLyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][lvl];
     level = [eLevel, dLevel, cLevel, bLevel][lvl];
-    for (i in blkLyr._layers) {
-        f = blkLyr._layers[i].feature.properties;
-        if (f.OBJECTID == Oid) {
-            cntnt = "";
-            if (f.PersonName != null) {
-                cntnt += "<i class='fas fa-user-alt'></i> " + f.PersonName + "<br>" }
-            if (f.PlaceName != null) {
-                cntnt +=  "<i class='fas fa-map-marker-alt'></i> " + f.PlaceName + "<br>" }
-            if (f.Contact != null) {
-                cntnt += "<i class='fas fa-mobile'></i> " + f.Contact + "<br>" }
-            if (f.Email != null) {
-                cntnt += "<i class='fas fa-envelope'></i> " + f.Email + "<br>" }
-            if (f.Details != null) {
-                cntnt += "<b>Other Info: </b><br>" +
-                          f.Details.replace(/,/g, "<br>") }
-            if ($("#searchBox").val() != "") {
-                $("#srchResult").html(cntnt); }
-            EblkLyr.setStyle(styleFunc());
-            DblkLyr.setStyle(styleFunc());
-            CblkLyr.setStyle(styleFunc());
-            BblkLyr.setStyle(styleFunc());
-            blkLyr._layers[i].setStyle(selectStyle());
-            blkLyr._layers[i].openPopup();
-            level.fitBounds(blkLyr._layers[i]._bounds.pad(-2));
-            break;
-        }
-    }
-    $( '.carouselMap' ).slickGoTo( lvl );
+    f_i = return_feature(blkLyr); f = f_i[0]; i = f_i[1];
+
+    // Info about the searched feature
+    cntnt = "";
+    if (f.PersonName != null) {
+        cntnt += "<i class='fas fa-user-alt'></i> " + f.PersonName + "<br>" }
+    if (f.PlaceName != null) {
+        cntnt +=  "<i class='fas fa-map-marker-alt'></i> " + f.PlaceName + "<br>" }
+    if (f.Contact != null) {
+        cntnt += "<i class='fas fa-mobile'></i> " + f.Contact + "<br>" }
+    if (f.Email != null) {
+        cntnt += "<i class='fas fa-envelope'></i> " + f.Email + "<br>" }
+    if (f.Details != null) {
+        cntnt += "<b>Other Info: </b><br>" +
+                  f.Details.replace(/,/g, "<br>") }
+    if ($("#searchBox").val() != "") {
+        $("#srchResult").html(cntnt); }
+
+    // Set styles and open Popup
+    EblkLyr.setStyle(styleFunc());
+    DblkLyr.setStyle(styleFunc());
+    CblkLyr.setStyle(styleFunc());
+    BblkLyr.setStyle(styleFunc());
+    blkLyr._layers[i].setStyle(selectStyle());
+    blkLyr._layers[i].openPopup();
+
+    $('#cmap').carousel(lvl);
+    level.invalidateSize();
+    level.fitBounds(blkLyr._layers[i]._bounds.pad(-2));
+    w3_close();
 }
 
 
@@ -414,7 +474,9 @@ function routeFunc(i) {
     markerGroup = L.featureGroup(markerArray).addTo(level);
     level.fitBounds(bounds);
 
-    $( '.carouselMap' ).slickGoTo( extnt_pts[3] );
+    $('#cmap').carousel(extnt_pts[3]);
+    level.invalidateSize();
+    w3_close();
 }
 
 // Reset page

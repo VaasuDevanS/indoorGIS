@@ -1,0 +1,25 @@
+#ELevel {
+    width: 87%;
+    height: 510px
+}
+#DLevel {
+    width: 90%;
+    height: 510px
+}
+#CLevel {
+    width: 87%;
+    height: 510px
+}
+#BLevel {
+    width: 88%;
+    height: 510px
+}
+.categories li a {
+    font-size: 14;
+}
+#steps_lift {
+    width: 40%
+}
+#cat {
+    height: 90%;
+}

@@ -114,6 +114,9 @@ def searchBox(request):
     Stat.objects.create(functionality="Search",
                         keyword=request.POST["keyword"],
                         returned=True)
+
+    print(nearest_facility(lvlCode, res.OBJECTID, "Facility,male"))
+
     return HttpResponse(str([int(res.OBJECTID), lvlCode]))
 
 
@@ -180,10 +183,12 @@ def solve_network(start, end, lvlCode):
     return result
 
 
-def nearest_facility(lvlCode, frmOID, facility):
+def nearest_facility(lvlCode, frmOID, f):
 
     blksDF = {ix: gpd.read_file(blk) for ix, blk in enumerate(blks)}
     blk = blksDF[lvlCode]
+    places = placesDF[lvlCode]
+    fNodes = blk.query("PlaceType==@f").PlaceNode.tolist()
     ...
 
 
