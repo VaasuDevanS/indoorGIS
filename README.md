@@ -30,6 +30,14 @@ gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level
 ### Commit log
 ***
 
+**v5.0 (Sep, 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v5.0.mp4)
+* SHP (Blocks, Route, Places) for all the rooms (TODO)
+* Routing through all the levels (TODO)
+* Fixed the shortest path through the blocks issue (TODO)
+* Statistics Model
+
+***
+
 **v4.0 (Aug 27, 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-Mobile.mp4)
 * Statistics Model for understanding the app usage (50% done)
 * CSS for Mobile screen sizes ([template](https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_examples_home2))

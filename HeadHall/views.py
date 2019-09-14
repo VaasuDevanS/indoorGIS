@@ -25,6 +25,10 @@ def name(x): return x.split(":")[1].strip()
 def level(x): return {"E": 0, "D": 1, "C": 2, "B": 3}[x[0]]
 
 
+# Euclidean distance function
+def dist(a, b): return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+
+
 # For reading SHP files
 HeadHall = join(static, "HeadHall", "SHPs")
 blks = [join(HeadHall, "%s_Level_Blocks" % i) for i in "EDCB"]
@@ -115,9 +119,12 @@ def searchBox(request):
                         keyword=request.POST["keyword"],
                         returned=True)
 
-    print(nearest_facility(lvlCode, res.OBJECTID, "Facility,male"))
+    fac = [nearest_facility(lvlCode, int(res.PlaceNode), "Facility,male"),
+           nearest_facility(lvlCode, int(res.PlaceNode), "Facility,female"),
+           nearest_facility(lvlCode, int(res.PlaceNode), "Steps"),
+           nearest_facility(lvlCode, int(res.PlaceNode), "Lift")]
 
-    return HttpResponse(str([int(res.OBJECTID), lvlCode]))
+    return HttpResponse(str([int(res.OBJECTID), lvlCode, fac]))
 
 
 def from_to_route(request):
@@ -144,7 +151,7 @@ def from_to_route(request):
 
         try:
             result = solve_network(start, end, frmLvl)
-            return_result = str([extent.tolist(), result, oIds, frmLvl])
+            return_result = str([1, [extent.tolist(), result, oIds, frmLvl]])
             status = True
         except:
             status = False
@@ -153,14 +160,28 @@ def from_to_route(request):
     else:
 
         blk = blksDF[frmLvl]
-        from_via = blk[blk.PlaceName.str.startswith(via, na=False)].PlaceNode
+        start = int(blk.query("PlaceName==@frm | PersonName==@frm | PlaceNode==@frm").PlaceNode)
+
+        via_nearest_OID = nearest_facility(frmLvl, start, via)
+        via_nearest_node = int(blk.query("PlaceNode==@via_nearest_OID").PlaceNode)
+        print(solve_network(start, via_nearest_node, frmLvl))
+
+        status = ""
 
         blk = blksDF[toLvl]
-        to_via = blk[blk.PlaceName.str.startswith(via, na=False)].PlaceNode
+
+        return_result = str([0, []])
 
     kwrd = "%s to %s via %s" % (rqst["from"], rqst["to"], rqst["mode"])
     Stat.objects.create(functionality="Routing", keyword=kwrd, returned=status)
     return HttpResponse(return_result)
+
+
+def get_coor(places, pn):
+
+    # Return coordinates in networkx node format
+    coor = places.geometry[places.PlaceNode == pn].tolist()[0]
+    return (float(rounding(coor.x)), float(rounding(coor.y)))
 
 
 def solve_network(start, end, lvlCode):
@@ -170,13 +191,7 @@ def solve_network(start, end, lvlCode):
     _ND = ND[lvlCode]
 
     # Get the Start and End point on the network based on selected blocks
-    start = places.geometry[places.PlaceNode == start].tolist()[0]
-    end = places.geometry[places.PlaceNode == end].tolist()[0]
-    startPt = (float(rounding(start.x)), float(rounding(start.y)))
-    endPt = (float(rounding(end.x)), float(rounding(end.y)))
-
-    # Euclidean distance function
-    def dist(a, b): return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+    startPt, endPt = get_coor(places, start), get_coor(places, end)
 
     # Solve the network and return the resultant nodes (reversed for leaflet)
     result = [list(i)[::-1] for i in nx.astar_path(_ND, startPt, endPt, dist)]
@@ -188,8 +203,22 @@ def nearest_facility(lvlCode, frmOID, f):
     blksDF = {ix: gpd.read_file(blk) for ix, blk in enumerate(blks)}
     blk = blksDF[lvlCode]
     places = placesDF[lvlCode]
-    fNodes = blk.query("PlaceType==@f").PlaceNode.tolist()
-    ...
+    _ND = ND[lvlCode]
 
+    cond1 = blk.PlaceName.str.startswith(f, na=False)
+    cond2 = blk.PlaceType.str.startswith(f, na=False)
+
+    result = blk[cond1 | cond2]
+    res_nodes = result.PlaceNode.tolist()
+    res_coords = [get_coor(places, node) for node in res_nodes]
+
+    start = get_coor(places, frmOID)
+
+    pt_distance = {}
+    for pn, pt in zip(res_nodes, res_coords):
+        pt_distance[pn] = nx.astar_path_length(_ND, start, pt, dist)
+
+    shortest_pnode = sorted(pt_distance, key=lambda x: pt_distance[x])[0]
+    return int(result.query("PlaceNode==@shortest_pnode").OBJECTID)
 
 # EOF

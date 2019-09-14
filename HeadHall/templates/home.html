@@ -270,6 +270,7 @@
 function w3_open() {
   document.getElementById("mySidebar").style.display = "block";
   document.getElementById("myOverlay").style.display = "block";
+  $("#from").focus();
 }
 
 function w3_close() {
@@ -386,7 +387,7 @@ function search() {
     });
 }
 
-function return_feature(lyr) {
+function return_feature(lyr, Oid) {
     for (i in lyr._layers) {
         f = lyr._layers[i].feature.properties;
         if (f.OBJECTID == Oid){
@@ -398,9 +399,10 @@ function return_feature(lyr) {
 function searchFunc(Oid_lvl) {
     Oid = eval(Oid_lvl)[0];
     lvl = eval(Oid_lvl)[1];
+    fac = eval(Oid_lvl)[2];
     blkLyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][lvl];
     level = [eLevel, dLevel, cLevel, bLevel][lvl];
-    f_i = return_feature(blkLyr); f = f_i[0]; i = f_i[1];
+    f_i = return_feature(blkLyr, Oid); f = f_i[0]; i = f_i[1];
 
     // Info about the searched feature
     cntnt = "";
@@ -415,8 +417,6 @@ function searchFunc(Oid_lvl) {
     if (f.Details != null) {
         cntnt += "<b>Other Info: </b><br>" +
                   f.Details.replace(/,/g, "<br>") }
-    if ($("#searchBox").val() != "") {
-        $("#srchResult").html(cntnt); }
 
     // Set styles and open Popup
     EblkLyr.setStyle(styleFunc());
@@ -430,7 +430,40 @@ function searchFunc(Oid_lvl) {
     level.invalidateSize();
     level.fitBounds(blkLyr._layers[i]._bounds.pad(-2));
     w3_close();
+
+    if (fac != undefined) {
+        cntnt += "<br><br><u>Near Me</u><br>"
+
+        // Nearest Male washroom
+        m_w = return_feature(blkLyr, fac[0])[0];
+        cntnt += "<i class='fas fa-male'></i> " + m_w.PlaceName;
+        cntnt += ` <a href="#" onclick='searchFunc("[${fac[0]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
+
+        // Nearest Female washroom
+        f_w = return_feature(blkLyr, fac[1])[0];
+        cntnt += "<i class='fas fa-female'></i> " + f_w.PlaceName;
+        cntnt += ` <a href="#" onclick='searchFunc("[${fac[1]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
+
+        // Nearest Steps
+        steps = return_feature(blkLyr, fac[2])[0];
+        cntnt += "<i class='fas fa-walking'></i> " + steps.PlaceName;
+        cntnt += ` <a href="#" onclick='searchFunc("[${fac[2]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
+
+        // Nearest Elevator
+        elevator = return_feature(blkLyr, fac[3])[0];
+        cntnt += "<i class='fas fa-person-booth'></i> " + elevator.PlaceName;
+        cntnt += ` <a href="#" onclick='searchFunc("[${fac[3]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
+
+        // Nearest Water Fountatin
+        cntnt += "<br>"
+
+    }
+
+    if ($("#searchBox").val() != "") {
+        $("#srchResult").html(cntnt); }
+
 }
+
 
 
 function routeFromTo() {
@@ -449,34 +482,39 @@ function routeFromTo() {
 // Generate route (necessary for routeFromTo function)
 function routeFunc(i) {
 
-    extnt_pts = eval(i);
+    type = eval(i);
+    if (type[0] == 1) {
 
-    // Create markers and zoom to highlighted blocks extent
-    bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
-              [extnt_pts[0][1], extnt_pts[0][0]]];
+        extnt_pts = type[1];
 
-    for (pt of extnt_pts[1]) {
-        markerArray.push(L.marker(pt, {icon: footpath}));
-        bounds.push(pt);
-    }
+        // Create markers and zoom to highlighted blocks extent
+        bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
+                  [extnt_pts[0][1], extnt_pts[0][0]]];
 
-    level = [eLevel, dLevel, cLevel, bLevel][extnt_pts[3]]
-    lyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][extnt_pts[3]]
-
-    // Highlight Blocks
-    for (i in lyr._layers) {
-        blk = lyr._layers[i];
-        if ($.inArray(blk.feature.properties.OBJECTID, extnt_pts[2]) != -1) {
-            blk.setStyle(selectStyle())
+        for (pt of extnt_pts[1]) {
+            markerArray.push(L.marker(pt, {icon: footpath}));
+            bounds.push(pt);
         }
+
+        level = [eLevel, dLevel, cLevel, bLevel][extnt_pts[3]]
+        lyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][extnt_pts[3]]
+
+        // Highlight Blocks
+        for (i in lyr._layers) {
+            blk = lyr._layers[i];
+            if ($.inArray(blk.feature.properties.OBJECTID, extnt_pts[2]) != -1) {
+                blk.setStyle(selectStyle())
+            }
+        }
+
+        markerGroup = L.featureGroup(markerArray).addTo(level);
+        level.fitBounds(bounds);
+
+        $('#cmap').carousel(extnt_pts[3]);
+        level.invalidateSize();
+        w3_close();
+
     }
-
-    markerGroup = L.featureGroup(markerArray).addTo(level);
-    level.fitBounds(bounds);
-
-    $('#cmap').carousel(extnt_pts[3]);
-    level.invalidateSize();
-    w3_close();
 }
 
 // Reset page
