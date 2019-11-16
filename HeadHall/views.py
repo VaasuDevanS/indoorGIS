@@ -151,7 +151,7 @@ def from_to_route(request):
 
         try:
             result = solve_network(start, end, frmLvl)
-            return_result = str([1, [extent.tolist(), result, oIds, frmLvl]])
+            return_result = str([0, [extent.tolist(), result, oIds, frmLvl]])
             status = True
         except:
             status = False
@@ -159,18 +159,43 @@ def from_to_route(request):
 
     else:
 
+        # origin to via
         blk = blksDF[frmLvl]
         start = int(blk.query("PlaceName==@frm | PersonName==@frm | PlaceNode==@frm").PlaceNode)
 
+        # networkx result
         via_nearest_OID = nearest_facility(frmLvl, start, via)
         via_nearest_node = int(blk.query("PlaceNode==@via_nearest_OID").PlaceNode)
-        print(solve_network(start, via_nearest_node, frmLvl))
+        via_nearest_name = blk.query("PlaceNode==@via_nearest_OID").PlaceName.tolist()[0]
+        result = solve_network(start, via_nearest_node, frmLvl)
 
-        status = ""
+        # Extent and OIDs
+        extent = blk.query("PlaceNode in [@start, @via_nearest_node]").geometry.total_bounds
+        oIds = blk.query("PlaceNode in [@start, @via_nearest_node]").OBJECTID.tolist()
 
+        # from level result
+        from_level_result = [extent.tolist(), result, oIds, frmLvl]
+
+        # ------------------------------------------------------------------
+
+        # via to destination
         blk = blksDF[toLvl]
+        to = int(blk.query("PlaceName==@to | PersonName==@to | PlaceNode==@to").PlaceNode)
 
-        return_result = str([0, []])
+        # networkx result
+        to_nearest_node = int(blk.query("PlaceName==@via_nearest_name").PlaceNode)
+        result = solve_network(to_nearest_node, to, toLvl)
+
+        # Extent and OIDs
+        extent = blk.query("PlaceNode in [@to_nearest_node, @to]").geometry.total_bounds
+        oIds = blk.query("PlaceNode in [@to_nearest_node, @to]").OBJECTID.tolist()
+
+        # to level result
+        to_level_result = [extent.tolist(), result, oIds, toLvl]
+
+        return_result = str([1, from_level_result, to_level_result])
+        status = True
+
 
     kwrd = "%s to %s via %s" % (rqst["from"], rqst["to"], rqst["mode"])
     Stat.objects.create(functionality="Routing", keyword=kwrd, returned=status)

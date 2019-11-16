@@ -166,6 +166,10 @@
                 </div>  &emsp;
                 <button class="btn btn-primary" onclick="routeFromTo()"> Show Route </button>
             </div>
+            <br><br>
+            <div id="route_diff_level" hidden>
+                <a id="continue_result" style="cursor:pointer">Continue</a>
+            </div>
         </div>
 
         <div id="nav03" style="background-color:#F5F5F5; padding-left:20px">
@@ -479,13 +483,11 @@ function routeFromTo() {
 }
 
 
+
 // Generate route (necessary for routeFromTo function)
 function routeFunc(i) {
 
-    type = eval(i);
-    if (type[0] == 1) {
-
-        extnt_pts = type[1];
+    function show_result(extnt_pts) {
 
         // Create markers and zoom to highlighted blocks extent
         bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
@@ -508,13 +510,23 @@ function routeFunc(i) {
         }
 
         markerGroup = L.featureGroup(markerArray).addTo(level);
-        level.fitBounds(bounds);
-
         $('#cmap').carousel(extnt_pts[3]);
         level.invalidateSize();
-        w3_close();
+        level.fitBounds(bounds);
 
     }
+
+    var lvl_results = eval(i);
+    show_result(lvl_results[1]);
+
+    if (lvl_results[0] == 1) {
+        $("#continue_result").on("click", function(){
+            show_result(lvl_results[2])
+        });
+        $("#route_diff_level").show();
+    }
+
+    w3_close();
 }
 
 // Reset page
@@ -527,6 +539,7 @@ function clearFunc() {
     dLevel.removeLayer(markerGroup);
     cLevel.removeLayer(markerGroup);
     bLevel.removeLayer(markerGroup);
+    $("#route_diff_level").hide();
 }
 
 function resetStyle() {
@@ -544,6 +557,7 @@ function resetStyle() {
     dLevel.closePopup();
     cLevel.closePopup();
     bLevel.closePopup();
+
 }
 
 
