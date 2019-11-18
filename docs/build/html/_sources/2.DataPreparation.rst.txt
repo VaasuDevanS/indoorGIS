@@ -1,0 +1,81 @@
+Preparing the Data
+==================
+
+|pic1| |pic2|
+
+|pic3| |pic4|
+
+.. |pic1| image:: _static/chap2/B_Level.jpg
+   :width: 45%
+
+.. |pic2| image:: _static/chap2/C_Level.jpg
+   :width: 45%
+
+.. |pic3| image:: _static/chap2/D_Level.jpg
+   :width: 45%
+
+.. |pic4| image:: _static/chap2/E_Level.png
+   :width: 45%
+
+
+Georeferencing
+~~~~~~~~~~~~~~
+
+Floor plan images were georeferenced so that shape files for blocks, route and
+points can be created. For this purpose, gdal_translate_ command was used
+
+.. _gdal_translate: https://gdal.org/programs/gdal_translate.html
+
+.. code-block:: console
+   
+   gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level.tiff
+
+
+
+Creating Shape Files
+~~~~~~~~~~~~~~~~~~~~
+
+**Polygons**
+
+Georeferenced tiff images were loaded into ArcGIS and blocks (Polygons) were 
+created for each rooms.
+
+**Lines**
+
+Line (route) network is created for the whole plan.
+
+**Points**
+
+Using ArcGIS's snapping tool, points for each block (polygon) were placed on
+the line network created. These points can be thought of as NODES.
+
+
+
+Converting Shape files to EDGES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Using ArcGIS's `Feature to Line tool`__ separate edges were created.
+Basic elements for routing (nodes and edges) were prepared now.
+
+__ http://desktop.arcgis.com/en/arcmap/10.3/tools/data-management-toolbox/feature-to-line.htm
+
+
+
+Attribute tables
+~~~~~~~~~~~~~~~~
+
+.. figure:: _static/chap2/attr_table_blocks.png
+   
+   Table schema for Blocks shapefile
+
+
+.. figure:: _static/chap2/attr_table_places.png
+   
+   Table schema for Places shapefile
+
+Corresponding description are filled in their own columns in blocks and places
+shapefiles. Both shapefiles have one attribute in common which is **PlaceNode**.
+For every block, there should be a point in the network with same PlaceNodes.
+This is useful when a <keyword> is given for searching, its corresponding 
+point can be found with the help of this PlaceNode attribute and the network
+can be queried for the route.

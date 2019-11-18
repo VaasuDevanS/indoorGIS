@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Preparing the Data &#8212; indoorGIS 6.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Backend Modules" href="3.BackendModules.html" />
+    <link rel="prev" title="Introduction" href="1.Introduction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="preparing-the-data">
+<h1>Preparing the Data<a class="headerlink" href="#preparing-the-data" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="_images/B_Level.jpg"><img alt="pic1" src="_images/B_Level.jpg" style="width: 45%;" /></a> <a class="reference internal" href="_images/C_Level.jpg"><img alt="pic2" src="_images/C_Level.jpg" style="width: 45%;" /></a></p>
+<p><a class="reference internal" href="_images/D_Level.jpg"><img alt="pic3" src="_images/D_Level.jpg" style="width: 45%;" /></a> <a class="reference internal" href="_images/E_Level.png"><img alt="pic4" src="_images/E_Level.png" style="width: 45%;" /></a></p>
+<div class="section" id="georeferencing">
+<h2>Georeferencing<a class="headerlink" href="#georeferencing" title="Permalink to this headline">¶</a></h2>
+<p>Floor plan images were georeferenced so that shape files for blocks, route and
+points can be created. For this purpose, <a class="reference external" href="https://gdal.org/programs/gdal_translate.html">gdal_translate</a> command was used</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level.tiff</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-shape-files">
+<h2>Creating Shape Files<a class="headerlink" href="#creating-shape-files" title="Permalink to this headline">¶</a></h2>
+<p><strong>Polygons</strong></p>
+<p>Georeferenced tiff images were loaded into ArcGIS and blocks (Polygons) were
+created for each rooms.</p>
+<p><strong>Lines</strong></p>
+<p>Line (route) network is created for the whole plan.</p>
+<p><strong>Points</strong></p>
+<p>Using ArcGIS’s snapping tool, points for each block (polygon) were placed on
+the line network created. These points can be thought of as NODES.</p>
+</div>
+<div class="section" id="converting-shape-files-to-edges">
+<h2>Converting Shape files to EDGES<a class="headerlink" href="#converting-shape-files-to-edges" title="Permalink to this headline">¶</a></h2>
+<p>Using ArcGIS’s <a class="reference external" href="http://desktop.arcgis.com/en/arcmap/10.3/tools/data-management-toolbox/feature-to-line.htm">Feature to Line tool</a> separate edges were created.
+Basic elements for routing (nodes and edges) were prepared now.</p>
+</div>
+<div class="section" id="attribute-tables">
+<h2>Attribute tables<a class="headerlink" href="#attribute-tables" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id2">
+<img alt="_images/attr_table_blocks.png" src="_images/attr_table_blocks.png" />
+<p class="caption"><span class="caption-text">Table schema for Blocks shapefile</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-default" id="id3">
+<img alt="_images/attr_table_places.png" src="_images/attr_table_places.png" />
+<p class="caption"><span class="caption-text">Table schema for Places shapefile</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>Corresponding description are filled in their own columns in blocks and places
+shapefiles. Both shapefiles have one attribute in common which is <strong>PlaceNode</strong>.
+For every block, there should be a point in the network with same PlaceNodes.
+This is useful when a &lt;keyword&gt; is given for searching, its corresponding
+point can be found with the help of this PlaceNode attribute and the network
+can be queried for the route.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">indoorGIS</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1.Introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preparing the Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#georeferencing">Georeferencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-shape-files">Creating Shape Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#converting-shape-files-to-edges">Converting Shape files to EDGES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attribute-tables">Attribute tables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="3.BackendModules.html">Backend Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4.FrontendModules.html">Frontend Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5.Working.html">Working</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6.ExtendingWork.html">Extending the work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7.Conclusion.html">Conclusion</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="1.Introduction.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="3.BackendModules.html" title="next chapter">Backend Modules</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Vaasudevan Srinivasan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/2.DataPreparation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

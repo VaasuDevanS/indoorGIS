@@ -1,0 +1,20 @@
+Introduction
+=============
+
+Indoor Routing or Indoor searching of rooms, facilities, faculties has always
+been one of the unsolved critical problems in GIS. There is no concrete and
+complete framework available in any programming language to achieve this.
+But there are many modules (packages / plugins) available which can be 
+mixed and played around to form a solution. It us upto the choice the developer
+to pock those modules and plugins for this task and this project indoorGIS
+tries to solve this problem of searching and routing indoor with a methodology.
+This is not the best novel approach to solve this but at the same time it is
+not that time consuming or computationally expensive. It uses Geopandas_, 
+Networkx_, Leaflet_, Jquery_ and it is hosted on pythonanywhere.com_ which is
+free, easy-to-use web hosting platform for python based web applications.
+
+.. _Geopandas: http://geopandas.org/
+.. _Networkx: https://networkx.github.io/
+.. _Leaflet: https://leafletjs.com/
+.. _Jquery: https://jquery.com/
+.. _pythonanywhere.com: https://www.pythonanywhere.com/

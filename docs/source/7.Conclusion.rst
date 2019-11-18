@@ -1,0 +1,14 @@
+Conclusion
+===========
+
+This work demonstrates how with just putting two python modules and two
+javascript modules together to solve the indoorGIS issue. For future works,
+the main challenge is to prepare the data in such a way that this work can be
+extended or used with little or less modifications. This project doesn't use
+any Geodatabases like PostGIS_ or Spatialite_ because of the deployment 
+platform limitations. However if the study area is more or if there are going
+to be more concurrent users, this app can be extended to use those kind of
+Geodatabases.
+
+.. _PostGIS: https://postgis.net/
+.. _Spatialite: https://www.gaia-gis.it/fossil/libspatialite/index
