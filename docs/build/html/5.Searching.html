@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Searching &#8212; indoorGIS 6.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Routing" href="6.Routing.html" />
+    <link rel="prev" title="Categories" href="4.Categories.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="searching">
+<h1>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h1>
+<p>indoorGIS mainly makes use of three python frameworks. <a class="reference external" href="https://www.djangoproject.com/">Django</a>, <a class="reference external" href="https://networkx.github.io/">Networkx</a> and
+<a class="reference external" href="http://geopandas.org/">Geopandas</a>. Django is a web framework which is used to make web applications
+with python as the backend (obviously). Networkx is used to get shortest routes
+and nearest facilities and other fucntions related to routing. Geopandas is
+used to read shapefiles on-the-fly and make queries based on attributes or
+lcoation</p>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">views.py</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">searchBox</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+
+    <span class="c1"># Build BlksDF dictionary</span>
+    <span class="n">blksDF</span> <span class="o">=</span> <span class="p">{</span><span class="n">ix</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">blk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blks</span><span class="p">)}</span>
+    <span class="n">rqst</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span>
+
+    <span class="c1"># Query for the keyword</span>
+    <span class="n">kwrd</span><span class="p">,</span> <span class="n">lvlCode</span> <span class="o">=</span> <span class="n">name</span><span class="p">(</span><span class="n">rqst</span><span class="p">[</span><span class="s2">&quot;keyword&quot;</span><span class="p">]),</span> <span class="n">level</span><span class="p">(</span><span class="n">rqst</span><span class="p">[</span><span class="s2">&quot;keyword&quot;</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">blksDF</span><span class="p">[</span><span class="n">lvlCode</span><span class="p">]</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;PlaceName==@kwrd | PersonName==@kwrd | PlaceNode==@kwrd&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Log to Stat model</span>
+    <span class="n">Stat</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">functionality</span><span class="o">=</span><span class="s2">&quot;Search&quot;</span><span class="p">,</span>
+                        <span class="n">keyword</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s2">&quot;keyword&quot;</span><span class="p">],</span>
+                        <span class="n">returned</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">fac</span> <span class="o">=</span> <span class="p">[</span><span class="n">nearest_facility</span><span class="p">(</span><span class="n">lvlCode</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">PlaceNode</span><span class="p">),</span> <span class="s2">&quot;Facility,male&quot;</span><span class="p">),</span>
+           <span class="n">nearest_facility</span><span class="p">(</span><span class="n">lvlCode</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">PlaceNode</span><span class="p">),</span> <span class="s2">&quot;Facility,female&quot;</span><span class="p">),</span>
+           <span class="n">nearest_facility</span><span class="p">(</span><span class="n">lvlCode</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">PlaceNode</span><span class="p">),</span> <span class="s2">&quot;Steps&quot;</span><span class="p">),</span>
+           <span class="n">nearest_facility</span><span class="p">(</span><span class="n">lvlCode</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">PlaceNode</span><span class="p">),</span> <span class="s2">&quot;Lift&quot;</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="nb">str</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">OBJECTID</span><span class="p">),</span> <span class="n">lvlCode</span><span class="p">,</span> <span class="n">fac</span><span class="p">]))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>searchBox function just takes request as the parameter which is the HTML request
+itself and it a immutable python dictionary which contains the keyword to be
+searched. It returns a response to browser with object ids of nearest facilities,
+its PlaceNode and its name itself</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">views.py</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">nearest_facility</span><span class="p">(</span><span class="n">lvlCode</span><span class="p">,</span> <span class="n">frmOID</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+
+    <span class="n">blksDF</span> <span class="o">=</span> <span class="p">{</span><span class="n">ix</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">blk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blks</span><span class="p">)}</span>
+    <span class="n">blk</span> <span class="o">=</span> <span class="n">blksDF</span><span class="p">[</span><span class="n">lvlCode</span><span class="p">]</span>
+    <span class="n">places</span> <span class="o">=</span> <span class="n">placesDF</span><span class="p">[</span><span class="n">lvlCode</span><span class="p">]</span>
+    <span class="n">_ND</span> <span class="o">=</span> <span class="n">ND</span><span class="p">[</span><span class="n">lvlCode</span><span class="p">]</span>
+
+    <span class="n">cond1</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">PlaceName</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">cond2</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">PlaceType</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">blk</span><span class="p">[</span><span class="n">cond1</span> <span class="o">|</span> <span class="n">cond2</span><span class="p">]</span>
+    <span class="n">res_nodes</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">PlaceNode</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">res_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_coor</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">res_nodes</span><span class="p">]</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">get_coor</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="n">frmOID</span><span class="p">)</span>
+
+    <span class="n">pt_distance</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">pn</span><span class="p">,</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">res_nodes</span><span class="p">,</span> <span class="n">res_coords</span><span class="p">):</span>
+        <span class="n">pt_distance</span><span class="p">[</span><span class="n">pn</span><span class="p">]</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">astar_path_length</span><span class="p">(</span><span class="n">_ND</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
+
+    <span class="n">shortest_pnode</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pt_distance</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pt_distance</span><span class="p">[</span><span class="n">x</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;PlaceNode==@shortest_pnode&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">OBJECTID</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>searchBox function is used when user enters a keyword and searches for it.
+This will also returns the nearest facilites for the given keyword.
+<strong>nearest_facility</strong> fucntion will look for all the facilities in all the
+categories and returns the one which can be accessed quickly.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">indoorGIS</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1.Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2.DataPreparation.html">Preparing the Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.HomePage.html">Home Page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4.Categories.html">Categories</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Searching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="6.Routing.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7.AdminPage.html">AdminPage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8.ExtendingWork.html">Extending the work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="4.Categories.html" title="previous chapter">Categories</a></li>
+      <li>Next: <a href="6.Routing.html" title="next chapter">Routing</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Vaasudevan Srinivasan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/5.Searching.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

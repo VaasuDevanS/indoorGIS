@@ -1,0 +1,81 @@
+Searching
+==========
+
+indoorGIS mainly makes use of three python frameworks. Django_, Networkx_ and 
+Geopandas_. Django is a web framework which is used to make web applications
+with python as the backend (obviously). Networkx is used to get shortest routes
+and nearest facilities and other fucntions related to routing. Geopandas is 
+used to read shapefiles on-the-fly and make queries based on attributes or 
+lcoation
+
+.. _Django: https://www.djangoproject.com/
+.. _Geopandas: http://geopandas.org/
+.. _Networkx: https://networkx.github.io/
+
+
+Workflow
+~~~~~~~~~~
+
+.. code-block:: python
+   :caption: views.py
+   :linenos:
+
+   def searchBox(request):
+
+       # Build BlksDF dictionary
+       blksDF = {ix: gpd.read_file(blk) for ix, blk in enumerate(blks)}
+       rqst = request.POST
+
+       # Query for the keyword
+       kwrd, lvlCode = name(rqst["keyword"]), level(rqst["keyword"])
+       res = blksDF[lvlCode].query("PlaceName==@kwrd | PersonName==@kwrd | PlaceNode==@kwrd")
+
+       # Log to Stat model
+       Stat.objects.create(functionality="Search",
+                           keyword=request.POST["keyword"],
+                           returned=True)
+
+       fac = [nearest_facility(lvlCode, int(res.PlaceNode), "Facility,male"),
+              nearest_facility(lvlCode, int(res.PlaceNode), "Facility,female"),
+              nearest_facility(lvlCode, int(res.PlaceNode), "Steps"),
+              nearest_facility(lvlCode, int(res.PlaceNode), "Lift")]
+
+       return HttpResponse(str([int(res.OBJECTID), lvlCode, fac]))
+	   
+searchBox function just takes request as the parameter which is the HTML request
+itself and it a immutable python dictionary which contains the keyword to be
+searched. It returns a response to browser with object ids of nearest facilities,
+its PlaceNode and its name itself
+
+
+.. code-block:: python
+   :caption: views.py
+   :linenos:
+   
+   def nearest_facility(lvlCode, frmOID, f):
+
+       blksDF = {ix: gpd.read_file(blk) for ix, blk in enumerate(blks)}
+       blk = blksDF[lvlCode]
+       places = placesDF[lvlCode]
+       _ND = ND[lvlCode]
+
+       cond1 = blk.PlaceName.str.startswith(f, na=False)
+       cond2 = blk.PlaceType.str.startswith(f, na=False)
+
+       result = blk[cond1 | cond2]
+       res_nodes = result.PlaceNode.tolist()
+       res_coords = [get_coor(places, node) for node in res_nodes]
+
+       start = get_coor(places, frmOID)
+
+       pt_distance = {}
+       for pn, pt in zip(res_nodes, res_coords):
+           pt_distance[pn] = nx.astar_path_length(_ND, start, pt, dist)
+
+       shortest_pnode = sorted(pt_distance, key=lambda x: pt_distance[x])[0]
+       return int(result.query("PlaceNode==@shortest_pnode").OBJECTID)
+
+searchBox function is used when user enters a keyword and searches for it.
+This will also returns the nearest facilites for the given keyword. 
+**nearest_facility** fucntion will look for all the facilities in all the 
+categories and returns the one which can be accessed quickly. 

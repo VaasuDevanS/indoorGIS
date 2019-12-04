@@ -1,0 +1,11 @@
+Categories
+===========
+
+Categories also follow the same workflow as seen in HomePage graph but it
+is explained in this chapter in a detailed manner.
+
+.. graphviz::
+
+   digraph Categories {
+      
+   }

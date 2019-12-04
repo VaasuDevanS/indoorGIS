@@ -9,6 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=build
+set SPHINXOPTS=-D graphviz_dot="C:\Users\vsriniva\Desktop\portable python-3.7.4 x64\App\GraphViz\bin\dot.exe"
 
 if "%1" == "" goto help
 

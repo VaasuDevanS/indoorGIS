@@ -15,8 +15,10 @@ the supervision of Dr. Shabnam Jabari
 
    1.Introduction.rst
    2.DataPreparation.rst
-   3.BackendModules.rst
-   4.FrontendModules.rst
-   5.Working.rst
-   6.ExtendingWork.rst
-   7.Conclusion.rst
+   3.HomePage.rst
+   4.Categories.rst
+   5.Searching.rst
+   6.Routing.rst
+   7.AdminPage.rst
+   8.ExtendingWork.rst
+   9.Conclusion.rst

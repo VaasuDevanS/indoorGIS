@@ -3,7 +3,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.gis.gdal import DataSource
 
 # Project imports
-from indoorGIS.settings import STATIC_ROOT as static
+from indoorGIS.settings import STATIC as static
 from .models import ELevel, DLevel, CLevel, BLevel, Stat
 from .categories import categorize
 

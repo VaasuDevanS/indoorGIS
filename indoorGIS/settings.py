@@ -25,7 +25,7 @@ SECRET_KEY = 'nn#&!j15kfv7-7r=(9fd^rml36ay(_)sqwfk)8b6i2g_&@rmkj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [u'indoorGIS.pythonanywhere.com']
+ALLOWED_HOSTS = [u'indoorGIS.pythonanywhere.com', '*']
 
 
 # Application definition
@@ -125,6 +125,11 @@ STATIC_URL = '/static/'
 # see https://help.pythonanywhere.com/pages/DjangoStaticFiles for more info
 MEDIA_ROOT = u'/home/indoorGIS/indoorGIS/media'
 MEDIA_URL = '/media/'
-STATIC_ROOT = u'/home/indoorGIS/indoorGIS/static'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATIC = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_URL = '/static/'
+
 

@@ -2,7 +2,7 @@
 from django.db import models
 
 # Project import
-from indoorGIS.settings import STATIC_ROOT as static
+from indoorGIS.settings import STATIC as static
 
 # Module imports
 from datetime import datetime

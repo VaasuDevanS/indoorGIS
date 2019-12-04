@@ -1,4 +1,4 @@
-<html lang="en"> {% load static %}
+<html lang="en"> {% load staticfiles %}
 <head>
 
     <meta charset="utf-8">
@@ -218,8 +218,10 @@
                     <a href="javascript:void(0)" onclick="$('#cmap').carousel(3);bLevel.invalidateSize();">B Level</a>
                 <br>
                 <a href="#about" data-toggle="modal">About</a> -
+                <a href="https://indoorgis.pythonanywhere.com/AdminLogin/" target="_blank">Admin Panel</a> -
                 <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a> -
-                <a href="#features" data-toggle="modal">Features</a>
+                <a href="https://indoorgis.readthedocs.io/en/latest/" target="_blank">Documentation</a> -
+                <a href="#legend" data-toggle="modal">Legend</a>
             </center>
         </div> <br> <!-- container div close -->
 
@@ -248,15 +250,16 @@
     		</div>
     	</div> <!-- about modal -->
 
-    	<div id="features" class="modal fade">
+    	<div id="legend" class="modal fade">
     		<div class="modal-dialog">
     			<div class="modal-content">
     				<div class="modal-header">
     					<button type="button" class="close" data-dismiss="modal"
     						aria-hidden="true">&times;</button>
-    					<h4 class="modal-title">Search / Route for</h4>
+    					<h4 class="modal-title">Legend</h4>
     				</div>
     				<div class="modal-body">
+                        <img src="{% static 'HeadHall/images/Legend.png' %}" width=100% height=40%>
     				    <div id="fields" style="overflow: auto; height: 60%"> </div>
     				</div>
     				<div class="modal-footer">
@@ -264,7 +267,7 @@
     				</div>
     			</div>
     		</div>
-    	</div> <!-- features modal close -->
+    	</div> <!-- legend modal close -->
 
 	</div> <!-- w3 div close -->
 
@@ -441,7 +444,7 @@ function searchFunc(Oid_lvl) {
         // Nearest Male washroom
         m_w = return_feature(blkLyr, fac[0])[0];
         cntnt += "<i class='fas fa-male'></i> " + m_w.PlaceName;
-        cntnt += ` <a href="#" onclick='searchFunc("[${fac[0]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
+        cntnt += `<a href="#" onclick='searchFunc("[${fac[0]}, ${lvl}]")'><i class="fas fa-search-location"></i></a> <br>`;
 
         // Nearest Female washroom
         f_w = return_feature(blkLyr, fac[1])[0];
@@ -488,13 +491,15 @@ function routeFromTo() {
 function routeFunc(i) {
 
     function show_result(extnt_pts) {
+    
+        markerArray = [];
 
         // Create markers and zoom to highlighted blocks extent
         bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
                   [extnt_pts[0][1], extnt_pts[0][0]]];
 
         for (pt of extnt_pts[1]) {
-            markerArray.push(L.marker(pt, {icon: footpath}));
+            markerArray.push(pt);
             bounds.push(pt);
         }
 
@@ -509,7 +514,14 @@ function routeFunc(i) {
             }
         }
 
-        markerGroup = L.featureGroup(markerArray).addTo(level);
+        markerGroup = new L.Polyline(markerArray, 
+                                     { color: 'red',
+                                       weight: 3,
+                                       opacity: 1,
+                                       smoothFactor: 1
+                                     }).addTo(level)
+         
+        // markerGroup = L.featureGroup(markerArray).addTo(level);
         $('#cmap').carousel(extnt_pts[3]);
         level.invalidateSize();
         level.fitBounds(bounds);
@@ -534,12 +546,35 @@ function clearFunc() {
     markerArray=[];
     $("#searchBox").val(''); $("#from").val(''); $("#to").val('');
     $("#searchBox").focus(); $("#from").focus();
+    
     resetStyle();
+    
     eLevel.removeLayer(markerGroup);
     dLevel.removeLayer(markerGroup);
     cLevel.removeLayer(markerGroup);
     bLevel.removeLayer(markerGroup);
     $("#route_diff_level").hide();
+    
+    // eLevel
+    lastly_added_element = Object.keys(eLevel._layers).length-1;
+    route_layer = Object.keys(eLevel._layers)[lastly_added_element];
+    eLevel.removeLayer(eLevel._layers[route_layer]);
+    
+    // dLevel
+    lastly_added_element = Object.keys(dLevel._layers).length-1;
+    route_layer = Object.keys(dLevel._layers)[lastly_added_element];
+    dLevel.removeLayer(dLevel._layers[route_layer]);
+    
+    // cLevel
+    lastly_added_element = Object.keys(cLevel._layers).length-1;
+    route_layer = Object.keys(cLevel._layers)[lastly_added_element];
+    cLevel.removeLayer(cLevel._layers[route_layer]);
+    
+    // bLevel
+    lastly_added_element = Object.keys(bLevel._layers).length-1;
+    route_layer = Object.keys(bLevel._layers)[lastly_added_element];
+    bLevel.removeLayer(bLevel._layers[route_layer]);
+    
 }
 
 function resetStyle() {
@@ -557,7 +592,6 @@ function resetStyle() {
     dLevel.closePopup();
     cLevel.closePopup();
     bLevel.closePopup();
-
 }
 
 
@@ -567,13 +601,16 @@ let markerArray = []; // Global
 
 function onEachFeatureFunc(feature, layer) {
 
-    // Tooltip (Labelling)
-    layer.bindTooltip(feature.properties.PlaceNode.toString(),
+    // Tooltip (Labeling)
+    layer.bindTooltip(feature.properties.PlaceName,
                       {direction: "center",
                        permanent: true,
-                       className: 'labelstyle'
-                      }).openTooltip();
+                       className: 'labelstyle',
+                      });
     $('.leaflet-tooltip').css("font-size", 10);
+    $('.leaflet-tooltip').css("background", "green");
+    $('.leaflet-tooltip').css("color", "black");
+    $(".leaflet-tooltip").css("display", "none");
 
     // Popup Content
     var content = "";
@@ -585,6 +622,7 @@ function onEachFeatureFunc(feature, layer) {
     layer.on('mouseover', function(f) { f.target.setStyle(selectStyle()) });
     layer.on('mouseout', function(f) { f.target.setStyle(styleFunc()); layer.closePopup() });
     // layer.off('click', this.openPopup);
+
 }
 
 
@@ -603,7 +641,7 @@ levelConfig = { minZoom: 2.45,
                 maxBounds: [[0, 0], [90, 180]],
                 maxBoundsViscosity: 1.0,
                 attributionControl: false
-}
+              }
 var bounds = [[0, 0], [90, 180]];
 
 // E-Level
@@ -629,6 +667,52 @@ url = "{% static 'HeadHall/baseimages/B_Level.jpg' %}";
 var bLevel = L.map('BLevel', levelConfig);
 L.imageOverlay(url, bounds).addTo(bLevel);
 bLevel.fitBounds(bounds);
+
+
+eLevel.on('zoomend', function() {
+    if (eLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        eLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        eLevel.invalidateSize();
+    }
+})
+
+dLevel.on('zoomend', function() {
+    if (dLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        dLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        dLevel.invalidateSize();
+    }
+})
+
+cLevel.on('zoomend', function() {
+    if (cLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        cLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        cLevel.invalidateSize();
+    }
+})
+
+bLevel.on('zoomend', function() {
+    if (bLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        bLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        bLevel.invalidateSize();
+    }
+})
+
 
 </script>
 

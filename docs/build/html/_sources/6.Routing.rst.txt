@@ -1,0 +1,47 @@
+Routing
+=======
+
+.. graphviz::
+
+   digraph {
+    
+      label="Working of Routing function";
+      if_valid[shape="diamond", style=""];
+      yes[shape="box", label="yes"];
+      no[shape="box", label="no"]
+
+        
+      "Input From and To" ->
+      "Select the place names from the search \ndropdown results" ->
+      "Set Steps or Lift \n(Default: Steps)" ->
+      "Click Show Route button" ->
+      "Function call from_to_route() \n(home.html)" ->
+      "Ajax call to python function from_to_route \n(views.py)" ->
+      "Extract levels and names" ->
+      if_valid -> yes;
+      if_valid -> no;
+      
+      yes -> "Find the PlaceNode for From and To" ->
+             "Python function solve_network() \ncall with those nodes" ->
+             "Return points of the route" ->
+             "Generate line from the set of points \n(home.html)"
+      ;
+      
+      no -> "Find the PlaceNode and level for From" ->
+            "Read the travel mode (steps / lift)" ->
+            "Find the nearest steps / lift PlaceNode iteratively \nusing nearest_facility() function" ->
+            "Find the path from that point to the destination using solve_network()" ->
+            "Return points of the route for both the levels" ->
+            "Generate line from the set of points \n(home.html)"
+      ;
+    }
+
+
+
+sect1
+~~~~~~
+
+
+
+sect2
+~~~~~~~

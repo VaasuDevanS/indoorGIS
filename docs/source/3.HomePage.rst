@@ -1,0 +1,23 @@
+Home Page
+=========
+
+.. graphviz::
+
+   digraph HomePage {
+      "Request to indoorGIS.pythonanywhere.com" ->
+      "Loading of StyleSheets, JS packages (Leaflet, etc.,)" ->
+      "Loading of Base Maps and Carousels and other HTML elements" ->
+      "Ajax function calls" -> {"loadFields \n(home.html)",
+                                "loadJSON \n(home.html)",
+                                "loadCategories \n(home.html)"
+                                }
+      "loadFields \n(home.html)" ->"loadFields \n(views.py)"
+      "loadJSON \n(home.html)" -> "loadJSON \n(views.py)"
+      "loadCategories \n(home.html)" -> "loadCategories \n(views.py)"
+      
+      {"loadFields \n(views.py)", "loadJSON \n(views.py)", "loadCategories \n(views.py)"} -> 
+      "Users can now perform Searching / Routing"
+   }
+
+sub-sect1
+~~~~~~~~~~~
