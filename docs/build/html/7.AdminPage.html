@@ -35,11 +35,26 @@
             
   <div class="section" id="adminpage">
 <h1>AdminPage<a class="headerlink" href="#adminpage" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="sect1">
-<h2>sect1<a class="headerlink" href="#sect1" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="sect2">
-<h2>sect2<a class="headerlink" href="#sect2" title="Permalink to this headline">¶</a></h2>
+<div class="graphviz"><img src="_images/graphviz-181950770e718f47f848eb61a28b9b5d3bcd3edc.png" alt="digraph AdminPage {
+
+   label=&quot;Working of AdminPage&quot;
+
+   &quot;Request to Admin Page&quot; -&gt;
+   &quot;Read Shape files and crete Django model objects \n using create_model_objects() in views.py&quot; -&gt;
+   &quot;Display all the attribute table information&quot; -&gt;
+   &quot;Edit information by clicking OBJECTID (primary key)&quot; -&gt;
+   &quot;Click save button to update in the Shapefile directly&quot;
+
+}" class="graphviz" /></div>
+<p>The above flowchart explains how Admin Page displays the attribute tables
+in an editable manner to update the records easily. Already four models
+representing four levels are already defined in models.py.</p>
+<div class="section" id="creating-users">
+<h2>Creating Users<a class="headerlink" href="#creating-users" title="Permalink to this headline">¶</a></h2>
+<p>Users have to be created in the deployed server. Only superusers can edit
+the data and create other superusers. This will be useful when multiple users
+(volunteers) can be assigned to edit the data if this project is to be
+implemented on a large scale.</p>
 </div>
 </div>
 
@@ -69,12 +84,12 @@
 <li class="toctree-l1"><a class="reference internal" href="5.Searching.html">Searching</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6.Routing.html">Routing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">AdminPage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sect1">sect1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sect2">sect2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-users">Creating Users</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="8.ExtendingWork.html">Extending the work</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.gitLog.html">Git Log</a></li>
 </ul>
 
 <div class="relations">

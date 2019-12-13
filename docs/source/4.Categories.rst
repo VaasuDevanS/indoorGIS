@@ -1,11 +1,22 @@
 Categories
 ===========
 
-Categories also follow the same workflow as seen in HomePage graph but it
-is explained in this chapter in a detailed manner.
-
 .. graphviz::
 
    digraph Categories {
+   
+      label="Working of Categories tab";
+    
+      "loadCategories \n(home.html)" -> "loadCategories \n(views.py)" ->
+      "categorize function \n(categories.py)" ->
+      {"Faculties", "Classrooms", "Facilities", "Labs", "Offices"}  ->
+      "Create HTML elements and assign icons" -> 
+      "Send to HTML" ->
+      "Renders using MetisMenu plugin"
+      "Facilities" -> {"Grad Longue / Grad Space", "Restrooms (Male / Female)", "Library"}
       
    }
+   
+   
+The above flow chart explains the things which will execute
+when request is made to the web app (in chronological order).

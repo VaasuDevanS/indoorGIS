@@ -1,0 +1,95 @@
+eLevel.on('zoomend', function() {
+    if (eLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 13);
+        eLevel.invalidateSize();
+    }
+    else if (eLevel.getZoom() == 4) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 10);
+        eLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        eLevel.invalidateSize();
+    }
+})
+
+dLevel.on('zoomend', function() {
+    if (dLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 13);
+        dLevel.invalidateSize();
+    }
+    else if (dLevel.getZoom() == 4) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 10);
+        dLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        dLevel.invalidateSize();
+    }
+})
+
+cLevel.on('zoomend', function() {
+    if (cLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 13);
+        cLevel.invalidateSize();
+    }
+    else if (cLevel.getZoom() == 4) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 10);
+        cLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        cLevel.invalidateSize();
+    }
+})
+
+bLevel.on('zoomend', function() {
+    if (bLevel.getZoom() == 5) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 13);
+        bLevel.invalidateSize();
+    }
+    else if (bLevel.getZoom() == 4) {
+        $(".leaflet-tooltip").css("display", "block");
+        $('.leaflet-tooltip').css("font-size", 10);
+        bLevel.invalidateSize();
+    }
+    else {
+        $(".leaflet-tooltip").css("display", "none");
+        bLevel.invalidateSize();
+    }
+})
+
+
+    
+    for (var p=0; p<3; p++) {
+    
+        // eLevel
+        lastly_added_element = Object.keys(eLevel._layers).length - 1;
+        route_layer = Object.keys(eLevel._layers)[lastly_added_element];
+        eLevel.removeLayer(eLevel._layers[route_layer]);
+        
+        // dLevel
+        lastly_added_element = Object.keys(dLevel._layers).length - 1;
+        route_layer = Object.keys(dLevel._layers)[lastly_added_element];
+        dLevel.removeLayer(dLevel._layers[route_layer]);
+        
+        // cLevel
+        lastly_added_element = Object.keys(cLevel._layers).length - 1;
+        route_layer = Object.keys(cLevel._layers)[lastly_added_element];
+        cLevel.removeLayer(cLevel._layers[route_layer]);
+        
+        // bLevel
+        lastly_added_element = Object.keys(bLevel._layers).length - 1;
+        route_layer = Object.keys(bLevel._layers)[lastly_added_element];
+        bLevel.removeLayer(bLevel._layers[route_layer]);
+    
+    }
+
+

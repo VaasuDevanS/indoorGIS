@@ -1,12 +1,47 @@
 Extending the work
 ===================
 
+Updating the Data
+~~~~~~~~~~~~~~~~~~
+
+Data can be updated directly using the Admin Page.
+Just need the proper credentials.
 
 
-Django
-~~~~~~
+Updating the ShapeFiles
+~~~~~~~~~~~~~~~~~~~~~~~
 
+.. graphviz::
 
+    digraph SHPFiles {
+       
+          label="Updating the SHP files"
+          
+          "SHP files can be created / edited using ArcGIS / QGIS" ->
+          "Updated SHP files has to be placed in 'static/HeadHall/SHPs' directory" ->
+          "If new polygons are created (for any new rooms), unique PlaceNode has to be created" ->
+          "Same PlaceNode has to be used in Places.SHP file"
 
-Leaflet
-~~~~~~~
+   }
+   
+   
+
+Extending for other buildings in UNB
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. graphviz::
+
+    digraph ExtendingWork {
+       
+          label="Extending the work for other buildings"
+          
+          "Create new Django App using manage.py" ->
+          "Create corresponding" ->
+          {"model in models.py", "html page in templates/ directory", "python functions in views.py", "static files like images etc., in static/ directory"
+        
+        }
+
+    }
+   
+The existing code can be used but variables / files must be changed
+accordingly.

@@ -35,10 +35,10 @@
             
   <div class="section" id="routing">
 <h1>Routing<a class="headerlink" href="#routing" title="Permalink to this headline">¶</a></h1>
-<div class="graphviz"><img src="_images/graphviz-71831165e57fbbd042a8df4c7c57e24379be6f3e.png" alt="digraph {
+<div class="graphviz"><img src="_images/graphviz-a79f8dc4d7e6d5a06d34d4b9941e1fc618e218af.png" alt="digraph {
 
-   label=&quot;Working of Routing function&quot;;
-   if_valid[shape=&quot;diamond&quot;, style=&quot;&quot;];
+   label=&quot;Working of Routing tab&quot;;
+   if_same_level[shape=&quot;diamond&quot;, style=&quot;&quot;];
    yes[shape=&quot;box&quot;, label=&quot;yes&quot;];
    no[shape=&quot;box&quot;, label=&quot;no&quot;]
 
@@ -50,8 +50,9 @@
    &quot;Function call from_to_route() \n(home.html)&quot; -&gt;
    &quot;Ajax call to python function from_to_route \n(views.py)&quot; -&gt;
    &quot;Extract levels and names&quot; -&gt;
-   if_valid -&gt; yes;
-   if_valid -&gt; no;
+   &quot;Read SHP files&quot; -&gt;
+   if_same_level -&gt; yes;
+   if_same_level -&gt; no;
 
    yes -&gt; &quot;Find the PlaceNode for From and To&quot; -&gt;
           &quot;Python function solve_network() \ncall with those nodes&quot; -&gt;
@@ -67,12 +68,7 @@
          &quot;Generate line from the set of points \n(home.html)&quot;
    ;
  }" class="graphviz" /></div>
-<div class="section" id="sect1">
-<h2>sect1<a class="headerlink" href="#sect1" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="sect2">
-<h2>sect2<a class="headerlink" href="#sect2" title="Permalink to this headline">¶</a></h2>
-</div>
+<p>The above flowchart explains how Routing works for multiple levels.</p>
 </div>
 
 
@@ -99,14 +95,11 @@
 <li class="toctree-l1"><a class="reference internal" href="3.HomePage.html">Home Page</a></li>
 <li class="toctree-l1"><a class="reference internal" href="4.Categories.html">Categories</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5.Searching.html">Searching</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Routing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sect1">sect1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sect2">sect2</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Routing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7.AdminPage.html">AdminPage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="8.ExtendingWork.html">Extending the work</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.gitLog.html">Git Log</a></li>
 </ul>
 
 <div class="relations">

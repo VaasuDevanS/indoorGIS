@@ -1,12 +1,31 @@
 AdminPage
 ==========
 
+.. graphviz::
+
+   digraph AdminPage {
+   
+      label="Working of AdminPage"
+      
+      "Request to Admin Page" ->
+      "Read Shape files and crete Django model objects \n using create_model_objects() in views.py" ->
+      "Display all the attribute table information" ->
+      "Edit information by clicking OBJECTID (primary key)" ->
+      "Click save button to update in the Shapefile directly"
+      
+   }
+   
+   
+The above flowchart explains how Admin Page displays the attribute tables
+in an editable manner to update the records easily. Already four models 
+representing four levels are already defined in models.py.
 
 
-sect1
-~~~~~~
 
+Creating Users
+~~~~~~~~~~~~~~
 
-
-sect2
-~~~~~~~
+Users have to be created in the deployed server. Only superusers can edit
+the data and create other superusers. This will be useful when multiple users
+(volunteers) can be assigned to edit the data if this project is to be 
+implemented on a large scale.

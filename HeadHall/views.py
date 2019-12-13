@@ -4,7 +4,7 @@ from django.contrib.gis.gdal import DataSource
 
 # Project imports
 from indoorGIS.settings import STATIC as static
-from .models import ELevel, DLevel, CLevel, BLevel, Stat
+from .models import ELevel, DLevel, CLevel, BLevel
 from .categories import categorize
 
 # Module imports
@@ -114,11 +114,6 @@ def searchBox(request):
     kwrd, lvlCode = name(rqst["keyword"]), level(rqst["keyword"])
     res = blksDF[lvlCode].query("PlaceName==@kwrd | PersonName==@kwrd | PlaceNode==@kwrd")
 
-    # Log to Stat model
-    Stat.objects.create(functionality="Search",
-                        keyword=request.POST["keyword"],
-                        returned=True)
-
     fac = [nearest_facility(lvlCode, int(res.PlaceNode), "Facility,male"),
            nearest_facility(lvlCode, int(res.PlaceNode), "Facility,female"),
            nearest_facility(lvlCode, int(res.PlaceNode), "Steps"),
@@ -152,9 +147,7 @@ def from_to_route(request):
         try:
             result = solve_network(start, end, frmLvl)
             return_result = str([0, [extent.tolist(), result, oIds, frmLvl]])
-            status = True
         except:
-            status = False
             return_result = None
 
     else:
@@ -193,12 +186,11 @@ def from_to_route(request):
         # to level result
         to_level_result = [extent.tolist(), result, oIds, toLvl]
 
+        # Return the result
         return_result = str([1, from_level_result, to_level_result])
-        status = True
 
 
     kwrd = "%s to %s via %s" % (rqst["from"], rqst["to"], rqst["mode"])
-    Stat.objects.create(functionality="Routing", keyword=kwrd, returned=status)
     return HttpResponse(return_result)
 
 

@@ -87,15 +87,4 @@ class BLevel(Level):
     blks = gpd.read_file(blkFile)
 
 
-class Stat(models.Model):
-
-    class Meta:
-        verbose_name_plural = "Statistics"
-
-    created_at = models.DateTimeField(default=datetime.now)
-    functionality = models.CharField(max_length=50)
-    keyword = models.CharField(max_length=200)
-    returned = models.BooleanField()
-
-
 # EOF

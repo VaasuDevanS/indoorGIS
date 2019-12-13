@@ -20,6 +20,7 @@ Study Area: HeadHall - [Link](https://www.google.com/maps/place/Head+Hall,+NB-1,
 | Metismenu   | [https://mm.onokumus.com/](https://mm.onokumus.com/)                                    | 3.0.4                  |
 | FontAwesome | [https://fontawesome.com/](https://fontawesome.com/)                                    | 5.9.0                  |
 | W3          | [https://www.w3schools.com/w3css/](https://www.w3schools.com/w3css/w3css_downloads.asp) | 4.13                   |
+| Sphinx      | [http://www.sphinx-doc.org/en/master/](http://www.sphinx-doc.org/en/master/)            | 2.2.1                  |
 
 ### Georeferencing
 To obtain geo-referenced tiff with the Plan images, the following [gdal_translate](https://gdal.org/programs/gdal_translate.html) command was used
@@ -30,11 +31,8 @@ gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level
 ### Commit log
 ***
 
-**v5.0 (Sep, 2019)** [Video](https://raw.githubusercontent.com/VaasuDevanS/indoorGIS/master/log/HeadHall/IndoorGIS-v5.0.mp4)
-* SHP (Blocks, Route, Places) for all the rooms (TODO)
-* Routing through all the levels (TODO)
-* Fixed the shortest path through the blocks issue (TODO)
-* Statistics Model
+**Final commit (Dec 13, 2019)**
+* 
 
 ***
 

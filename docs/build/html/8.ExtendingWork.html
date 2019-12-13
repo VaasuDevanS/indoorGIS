@@ -35,11 +35,39 @@
             
   <div class="section" id="extending-the-work">
 <h1>Extending the work<a class="headerlink" href="#extending-the-work" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="django">
-<h2>Django<a class="headerlink" href="#django" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="updating-the-data">
+<h2>Updating the Data<a class="headerlink" href="#updating-the-data" title="Permalink to this headline">¶</a></h2>
+<p>Data can be updated directly using the Admin Page.
+Just need the proper credentials.</p>
 </div>
-<div class="section" id="leaflet">
-<h2>Leaflet<a class="headerlink" href="#leaflet" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="updating-the-shapefiles">
+<h2>Updating the ShapeFiles<a class="headerlink" href="#updating-the-shapefiles" title="Permalink to this headline">¶</a></h2>
+<div class="graphviz"><img src="_images/graphviz-0c307d1c44df42c4aeb057bb4790cfc72708766f.png" alt="digraph SHPFiles {
+
+       label=&quot;Updating the SHP files&quot;
+
+       &quot;SHP files can be created / edited using ArcGIS / QGIS&quot; -&gt;
+       &quot;Updated SHP files has to be placed in 'static/HeadHall/SHPs' directory&quot; -&gt;
+       &quot;If new polygons are created (for any new rooms), unique PlaceNode has to be created&quot; -&gt;
+       &quot;Same PlaceNode has to be used in Places.SHP file&quot;
+
+}" class="graphviz" /></div>
+</div>
+<div class="section" id="extending-for-other-buildings-in-unb">
+<h2>Extending for other buildings in UNB<a class="headerlink" href="#extending-for-other-buildings-in-unb" title="Permalink to this headline">¶</a></h2>
+<div class="graphviz"><img src="_images/graphviz-7766cd4ca8e5610ba9d670bd4b9c9db2832a15d5.png" alt="digraph ExtendingWork {
+
+      label=&quot;Extending the work for other buildings&quot;
+
+      &quot;Create new Django App using manage.py&quot; -&gt;
+      &quot;Create corresponding&quot; -&gt;
+      {&quot;model in models.py&quot;, &quot;html page in templates/ directory&quot;, &quot;python functions in views.py&quot;, &quot;static files like images etc., in static/ directory&quot;
+
+    }
+
+}" class="graphviz" /></div>
+<p>The existing code can be used but variables / files must be changed
+accordingly.</p>
 </div>
 </div>
 
@@ -70,11 +98,13 @@
 <li class="toctree-l1"><a class="reference internal" href="6.Routing.html">Routing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7.AdminPage.html">AdminPage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Extending the work</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#django">Django</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#leaflet">Leaflet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-the-data">Updating the Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-the-shapefiles">Updating the ShapeFiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-for-other-buildings-in-unb">Extending for other buildings in UNB</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.gitLog.html">Git Log</a></li>
 </ul>
 
 <div class="relations">

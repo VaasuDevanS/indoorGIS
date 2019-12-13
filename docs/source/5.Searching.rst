@@ -13,8 +13,6 @@ lcoation
 .. _Networkx: https://networkx.github.io/
 
 
-Workflow
-~~~~~~~~~~
 
 .. code-block:: python
    :caption: views.py
@@ -79,3 +77,31 @@ searchBox function is used when user enters a keyword and searches for it.
 This will also returns the nearest facilites for the given keyword. 
 **nearest_facility** fucntion will look for all the facilities in all the 
 categories and returns the one which can be accessed quickly. 
+
+
+
+Workflow
+~~~~~~~~~~
+
+.. graphviz::
+
+   digraph Searching {
+   
+      label="Working of Searching tab";
+      
+      
+      "Input in the 'Search For' box" ->
+      "Click results from the search results dropdown" ->
+      "Click Find button" ->
+      "Function call search() \n(home.html)" ->
+      "Ajax call searchBox to searchBox() function \n(views.py)" ->
+      "Extract Level and keyword" ->
+      "Read SHP files" ->
+      "Check if keyword is equal to PlaceName or PersonName" ->
+      "Append its OBJECTID to RETURN_LIST" ->
+      "Get Nearest Facilities and append to RETURN_LIST" ->
+      "Return RETURN_LIST to js function" ->
+      "Get all the information and display accordingly"
+      
+   }
+

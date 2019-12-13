@@ -5,8 +5,8 @@ Routing
 
    digraph {
     
-      label="Working of Routing function";
-      if_valid[shape="diamond", style=""];
+      label="Working of Routing tab";
+      if_same_level[shape="diamond", style=""];
       yes[shape="box", label="yes"];
       no[shape="box", label="no"]
 
@@ -18,8 +18,9 @@ Routing
       "Function call from_to_route() \n(home.html)" ->
       "Ajax call to python function from_to_route \n(views.py)" ->
       "Extract levels and names" ->
-      if_valid -> yes;
-      if_valid -> no;
+      "Read SHP files" ->
+      if_same_level -> yes;
+      if_same_level -> no;
       
       yes -> "Find the PlaceNode for From and To" ->
              "Python function solve_network() \ncall with those nodes" ->
@@ -36,12 +37,4 @@ Routing
       ;
     }
 
-
-
-sect1
-~~~~~~
-
-
-
-sect2
-~~~~~~~
+The above flowchart explains how Routing works for multiple levels.

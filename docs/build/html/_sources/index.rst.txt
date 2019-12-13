@@ -22,3 +22,5 @@ the supervision of Dr. Shabnam Jabari
    7.AdminPage.rst
    8.ExtendingWork.rst
    9.Conclusion.rst
+   10.gitLog.rst
+   

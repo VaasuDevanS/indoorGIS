@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'HeadHall/css/toggle-switch.css' %}" /> <!-- https://ghinda.net/css-toggle-switch/ -->
     <link rel="stylesheet" href="{% static 'HeadHall/css/w3.css' %}">
     <link rel="stylesheet" href="{% static 'HeadHall/css/w3-theme-teal.css' %}">
+    <link rel="stylesheet" href="{% static 'HeadHall/css/easy-button.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 
     <link rel="stylesheet"
@@ -25,6 +26,7 @@
     <link rel="icon" href="{% static 'HeadHall/images/GISIcon.ico' %}">
 
     <style>
+    
         .leaflet-container {
             background-color:rgba(255,0,0,0.0);
             border: 1px solid black;
@@ -106,6 +108,15 @@
         .categories {
             padding-left: 20px;
         }
+        .leaflet-bar button {
+            padding-top:9px;
+        }
+        .leaflet-tooltip {
+            color: black;
+            display: none;
+            font-size: 14;
+        }
+        
     </style>
 
 </head>
@@ -117,6 +128,7 @@
     <script src="{% static 'HeadHall/js/leaflet.js' %}"> </script>
     <script src="{% static 'HeadHall/js/metismenu.js' %}"></script>
     <script src="{% static 'HeadHall/js/w3codecolor.js' %}"></script>
+    <script src="{% static 'HeadHall/js/easy-button.js' %}"></script>
 
     <div class="w3-sidebar w3-collapse w3-white w3-animate-left w3-large" style="z-index:3;width:375px;border:1px groove black" id="mySidebar">
 
@@ -138,6 +150,7 @@
             <a class="w3-button w3-hover-teal w3-hide-large w3-large w3-right" href="javascript:void(0)" onclick="w3_close()">
             <i class="fas fa-arrow-left"></i></a>
             <br>
+            <p style="font-size:15px; font-family:'Courier New'">(Enter atleast two characters)</p>
             Search for <br> <input type="text" id="searchBox" /> <input type="reset" id="srchReset" value=""/>
             <script>$("#searchBox").focus()</script>
             <br><br>
@@ -151,17 +164,18 @@
             <a class="w3-button w3-hover-teal w3-hide-large w3-large w3-right" href="javascript:void(0)" onclick="w3_close()">
             <i class="fas fa-arrow-left"></i></a>
             <br>
+            <p style="font-size:15px; font-family:'Courier New'">(Enter atleast two characters)</p>
             From <br> <input type="text" id="from" /> <input type="reset" id="fromReset" value="" />
             <i class="fas fa-sort" id="swap" style="cursor:pointer; font-size:25px; padding-left:310px; padding-top:20px"></i>
             <br>
             To <br> <input type="text" id="to" /> <input type="reset" id="toReset" value="" />
             <br><br>
             <div style="display:flex">
-                <div id="steps_lift" class="switch-toggle switch-candy switch-candy-blue">
+                <div id="steps_lift" class="switch-toggle switch-candy switch-candy-green">
                     <input id="steps" value="Steps" name="mode" type="radio" checked>
-                    <label id="lsteps" for="steps" onclick="">Steps</label>
+                    <label id="lsteps" for="steps" onclick="">Stairs</label>
                     <input id="lift" value="Lift" name="mode" type="radio">
-                    <label id="llift" for="lift" onclick="">Lift</label>
+                    <label id="llift" for="lift" onclick="">Elevator</label>
                     <a></a>
                 </div>  &emsp;
                 <button class="btn btn-primary" onclick="routeFromTo()"> Show Route </button>
@@ -170,6 +184,15 @@
             <div id="route_diff_level" hidden>
                 <a id="continue_result" style="cursor:pointer">Continue</a>
             </div>
+            <br><br>
+            <p style="font-size:15px; font-family:'Courier New'">
+                Entrances: <br>
+                <a href="#" onclick="$('#from').val('C-Lvl: Windsor St (CS)')">Windsor St Entrance (CS side)</a> <br>
+                <a href="#" onclick="$('#from').val('C-Lvl: Windsor St (other)')">Windsor St Entrance (other side)</a> <br>
+                <a href="#" onclick="$('#from').val('C-Lvl: Dineen Dr (CS)')">Dineen Dr Entrance (CS side)</a> <br>
+                <a href="#" onclick="$('#from').val('D-Lvl: Dineen Dr (Engg)')">Dineen Dr Entrance (Engg. side)</a> <br>
+                <a href="#" onclick="$('#from').val('D-Lvl: Dineen Dr (other)')">Dineen Dr Entrance (other)</a>
+            </p>           
         </div>
 
         <div id="nav03" style="background-color:#F5F5F5; padding-left:20px">
@@ -211,17 +234,23 @@
                        </div>
                      </div>
                 </div>
+                <span class="col-sm-0 hidden-xs hidden-s">
+                    <br>
+                    <img style="display:inline-block" src="{% static 'HeadHall/images/Legend.png' %}" width=20% height=20%>
+                    <br>
+                </span>
                 <br>
-                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(0);eLevel.invalidateSize();">E Level</a> |
-                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(1);dLevel.invalidateSize();">D Level</a> |
-                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(2);cLevel.invalidateSize();">C Level</a> |
-                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(3);bLevel.invalidateSize();">B Level</a>
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(0);eLevel.invalidateSize();resetStyle();">E Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(1);dLevel.invalidateSize();resetStyle();">D Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(2);cLevel.invalidateSize();resetStyle();">C Level</a> |
+                    <a href="javascript:void(0)" onclick="$('#cmap').carousel(3);bLevel.invalidateSize();resetStyle();">B Level</a>
                 <br>
                 <a href="#about" data-toggle="modal">About</a> -
-                <a href="https://indoorgis.pythonanywhere.com/AdminLogin/" target="_blank">Admin Panel</a> -
+                <a href="/admin/" target="_blank">Admin Page</a> -
                 <a href="https://github.com/VaasuDevanS/indoorGIS" target="_blank">Github</a> -
-                <a href="https://indoorgis.readthedocs.io/en/latest/" target="_blank">Documentation</a> -
-                <a href="#legend" data-toggle="modal">Legend</a>
+                <a href="https://indoorgis.readthedocs.io/en/latest/" target="_blank">Documentation</a>
+                <span class="col-sm-0 hidden-lg hidden-md">- <a href="#legend" data-toggle="modal">Legend</a> </span>
+                
             </center>
         </div> <br> <!-- container div close -->
 
@@ -260,7 +289,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/Legend.png' %}" width=100% height=40%>
-    				    <div id="fields" style="overflow: auto; height: 60%"> </div>
+    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -298,7 +327,7 @@ function openNav(id) {
 $(function() {
 
     openNav("nav01");
-
+    
     // http://output.jsbin.com/uloli3/63
     $("#srchReset").click(function() {
         $("#searchBox").val("").focus();
@@ -404,6 +433,7 @@ function return_feature(lyr, Oid) {
 }
 
 function searchFunc(Oid_lvl) {
+
     Oid = eval(Oid_lvl)[0];
     lvl = eval(Oid_lvl)[1];
     fac = eval(Oid_lvl)[2];
@@ -434,8 +464,8 @@ function searchFunc(Oid_lvl) {
     blkLyr._layers[i].openPopup();
 
     $('#cmap').carousel(lvl);
-    level.invalidateSize();
     level.fitBounds(blkLyr._layers[i]._bounds.pad(-2));
+    level.invalidateSize();
     w3_close();
 
     if (fac != undefined) {
@@ -488,20 +518,15 @@ function routeFromTo() {
 
 
 // Generate route (necessary for routeFromTo function)
-function routeFunc(i) {
+function routeFunc(input_from_python) {
 
-    function show_result(extnt_pts) {
-    
-        markerArray = [];
+    //console.log(input_from_python);
+
+    function show_result(extnt_pts, diff_level=0) {
 
         // Create markers and zoom to highlighted blocks extent
         bounds = [[extnt_pts[0][3], extnt_pts[0][2]],
                   [extnt_pts[0][1], extnt_pts[0][0]]];
-
-        for (pt of extnt_pts[1]) {
-            markerArray.push(pt);
-            bounds.push(pt);
-        }
 
         level = [eLevel, dLevel, cLevel, bLevel][extnt_pts[3]]
         lyr = [EblkLyr, DblkLyr, CblkLyr, BblkLyr][extnt_pts[3]]
@@ -513,29 +538,54 @@ function routeFunc(i) {
                 blk.setStyle(selectStyle())
             }
         }
-
-        markerGroup = new L.Polyline(markerArray, 
+                                     
+        if (diff_level == 1) {
+        
+            markerArray1 = [];
+            for (pt of extnt_pts[1]) {
+              markerArray1.push(pt);
+              bounds.push(pt);
+            }
+        
+            markerGroup1 = new L.Polyline(markerArray1, 
                                      { color: 'red',
                                        weight: 3,
                                        opacity: 1,
                                        smoothFactor: 1
                                      }).addTo(level)
+        }
+        else {
+        
+            markerArray = [];
+            for (pt of extnt_pts[1]) {
+              markerArray.push(pt);
+              bounds.push(pt);
+            }
+        
+            markerGroup = new L.Polyline(markerArray, 
+                                     { color: 'red',
+                                       weight: 3,
+                                       opacity: 1,
+                                       smoothFactor: 1
+                                     }).addTo(level)
+        }
          
-        // markerGroup = L.featureGroup(markerArray).addTo(level);
         $('#cmap').carousel(extnt_pts[3]);
         level.invalidateSize();
         level.fitBounds(bounds);
 
     }
-
-    var lvl_results = eval(i);
-    show_result(lvl_results[1]);
+    
+    var lvl_results = eval(input_from_python);
+    show_result(lvl_results[1], lvl_results[0]);
 
     if (lvl_results[0] == 1) {
         $("#continue_result").on("click", function(){
             show_result(lvl_results[2])
         });
         $("#route_diff_level").show();
+        $("#continue_result").html("Continue");
+        $("#continue_result").append(" on " + "EDCB"[lvl_results[2][3]] + "-Level");
     }
 
     w3_close();
@@ -543,38 +593,23 @@ function routeFunc(i) {
 
 // Reset page
 function clearFunc() {
-    markerArray=[];
+
     $("#searchBox").val(''); $("#from").val(''); $("#to").val('');
     $("#searchBox").focus(); $("#from").focus();
     
     resetStyle();
+    window.location.reload();
     
     eLevel.removeLayer(markerGroup);
     dLevel.removeLayer(markerGroup);
     cLevel.removeLayer(markerGroup);
     bLevel.removeLayer(markerGroup);
+    eLevel.removeLayer(markerGroup1);
+    dLevel.removeLayer(markerGroup1);
+    cLevel.removeLayer(markerGroup1);
+    bLevel.removeLayer(markerGroup1);
     $("#route_diff_level").hide();
-    
-    // eLevel
-    lastly_added_element = Object.keys(eLevel._layers).length-1;
-    route_layer = Object.keys(eLevel._layers)[lastly_added_element];
-    eLevel.removeLayer(eLevel._layers[route_layer]);
-    
-    // dLevel
-    lastly_added_element = Object.keys(dLevel._layers).length-1;
-    route_layer = Object.keys(dLevel._layers)[lastly_added_element];
-    dLevel.removeLayer(dLevel._layers[route_layer]);
-    
-    // cLevel
-    lastly_added_element = Object.keys(cLevel._layers).length-1;
-    route_layer = Object.keys(cLevel._layers)[lastly_added_element];
-    cLevel.removeLayer(cLevel._layers[route_layer]);
-    
-    // bLevel
-    lastly_added_element = Object.keys(bLevel._layers).length-1;
-    route_layer = Object.keys(bLevel._layers)[lastly_added_element];
-    bLevel.removeLayer(bLevel._layers[route_layer]);
-    
+       
 }
 
 function resetStyle() {
@@ -602,15 +637,18 @@ let markerArray = []; // Global
 function onEachFeatureFunc(feature, layer) {
 
     // Tooltip (Labeling)
-    layer.bindTooltip(feature.properties.PlaceName,
-                      {direction: "center",
+    layer.bindTooltip(feature.properties.PlaceName, {
                        permanent: true,
+                       direction: 'center',
                        className: 'labelstyle',
                       });
-    $('.leaflet-tooltip').css("font-size", 10);
-    $('.leaflet-tooltip').css("background", "green");
-    $('.leaflet-tooltip').css("color", "black");
-    $(".leaflet-tooltip").css("display", "none");
+                      
+    if (feature.properties.PlaceName != null) {
+        if(feature.properties.PlaceName.startsWith('Lift') == true)
+            layer.bindTooltip(`<img src="{% static 'HeadHall/images/elevator.png' %}" width=50 height=50>`)
+        if(feature.properties.PlaceName.startsWith('Steps') == true)
+            layer.bindTooltip(`<img src="{% static 'HeadHall/images/stairs.png' %}" width=50 height=50>`)
+    }
 
     // Popup Content
     var content = "";
@@ -620,7 +658,10 @@ function onEachFeatureFunc(feature, layer) {
         content += "<i class='fas fa-map-marker-alt'></i> " + feature.properties.PlaceName; }
     layer.bindPopup(content);
     layer.on('mouseover', function(f) { f.target.setStyle(selectStyle()) });
-    layer.on('mouseout', function(f) { f.target.setStyle(styleFunc()); layer.closePopup() });
+    layer.on('mouseout', function(f) { 
+        f.target.setStyle(styleFunc());
+        layer.closePopup();
+    });
     // layer.off('click', this.openPopup);
 
 }
@@ -640,79 +681,114 @@ levelConfig = { minZoom: 2.45,
                 crs: L.CRS.Simple,
                 maxBounds: [[0, 0], [90, 180]],
                 maxBoundsViscosity: 1.0,
-                attributionControl: false
+                attributionControl: false,
               }
 var bounds = [[0, 0], [90, 180]];
+var opacity = {opacity: 0.6};
 
 // E-Level
 url = "{% static 'HeadHall/baseimages/E_Level.png' %}";
 var eLevel = L.map('ELevel', levelConfig);
-L.imageOverlay(url, bounds).addTo(eLevel);
+L.imageOverlay(url, bounds, opacity).addTo(eLevel);
 eLevel.fitBounds(bounds);
 
 // D-Level
 url = "{% static 'HeadHall/baseimages/D_Level.jpg' %}";
 var dLevel = L.map('DLevel', levelConfig);
-L.imageOverlay(url, bounds).addTo(dLevel);
+L.imageOverlay(url, bounds, opacity).addTo(dLevel);
 dLevel.fitBounds(bounds);
 
 // C-Level
 url = "{% static 'HeadHall/baseimages/C_Level.jpg' %}";
 var cLevel = L.map('CLevel', levelConfig);
-L.imageOverlay(url, bounds).addTo(cLevel);
+L.imageOverlay(url, bounds, opacity).addTo(cLevel);
 cLevel.fitBounds(bounds);
 
 // B-Level
 url = "{% static 'HeadHall/baseimages/B_Level.jpg' %}";
 var bLevel = L.map('BLevel', levelConfig);
-L.imageOverlay(url, bounds).addTo(bLevel);
+L.imageOverlay(url, bounds, opacity).addTo(bLevel);
 bLevel.fitBounds(bounds);
 
+L.easyButton({
+  states: [{
+    stateName: 'show-labels',
+    icon: 'fa-infinity',
+    title: 'Show Labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "block");
+      control.state('remove-labels');
+    }
+  }, {
+    icon: 'fa-undo',
+    stateName: 'remove-labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "none");
+      control.state('show-labels');
+    },
+    title: 'Hide Labels'
+  }]
+}).addTo(eLevel);
 
-eLevel.on('zoomend', function() {
-    if (eLevel.getZoom() == 5) {
-        $(".leaflet-tooltip").css("display", "block");
-        eLevel.invalidateSize();
+L.easyButton({
+  states: [{
+    stateName: 'show-labels',
+    icon: 'fa-infinity',
+    title: 'Show Labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "block");
+      control.state('remove-labels');
     }
-    else {
-        $(".leaflet-tooltip").css("display", "none");
-        eLevel.invalidateSize();
-    }
-})
+  }, {
+    icon: 'fa-undo',
+    stateName: 'remove-labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "none");
+      control.state('show-labels');
+    },
+    title: 'Hide Labels'
+  }]
+}).addTo(dLevel);
 
-dLevel.on('zoomend', function() {
-    if (dLevel.getZoom() == 5) {
-        $(".leaflet-tooltip").css("display", "block");
-        dLevel.invalidateSize();
+L.easyButton({
+  states: [{
+    stateName: 'show-labels',
+    icon: 'fa-infinity',
+    title: 'Show Labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "block");
+      control.state('remove-labels');
     }
-    else {
-        $(".leaflet-tooltip").css("display", "none");
-        dLevel.invalidateSize();
-    }
-})
+  }, {
+    icon: 'fa-undo',
+    stateName: 'remove-labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "none");
+      control.state('show-labels');
+    },
+    title: 'Hide Labels'
+  }]
+}).addTo(cLevel);
 
-cLevel.on('zoomend', function() {
-    if (cLevel.getZoom() == 5) {
-        $(".leaflet-tooltip").css("display", "block");
-        cLevel.invalidateSize();
+L.easyButton({
+  states: [{
+    stateName: 'show-labels',
+    icon: 'fa-infinity',
+    title: 'Show Labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "block");
+      control.state('remove-labels');
     }
-    else {
-        $(".leaflet-tooltip").css("display", "none");
-        cLevel.invalidateSize();
-    }
-})
-
-bLevel.on('zoomend', function() {
-    if (bLevel.getZoom() == 5) {
-        $(".leaflet-tooltip").css("display", "block");
-        bLevel.invalidateSize();
-    }
-    else {
-        $(".leaflet-tooltip").css("display", "none");
-        bLevel.invalidateSize();
-    }
-})
-
+  }, {
+    icon: 'fa-undo',
+    stateName: 'remove-labels',
+    onClick: function(control) {
+      $('.leaflet-tooltip').css("display", "none");
+      control.state('show-labels');
+    },
+    title: 'Hide Labels'
+  }]
+}).addTo(bLevel);
 
 </script>
 

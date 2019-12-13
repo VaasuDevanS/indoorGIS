@@ -19,5 +19,8 @@ Home Page
       "Users can now perform Searching / Routing"
    }
 
-sub-sect1
-~~~~~~~~~~~
+
+The above flow chart explains the things which will execute
+when request is made to the web app (in chronological order).
+Categories also follow the same workflow as seen in HomePage graph but it
+is explained in this chapter in a detailed manner.

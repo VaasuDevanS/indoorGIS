@@ -18,6 +18,9 @@
     font-size: 13.5;
 }
 #steps_lift {
-    width: 40%;
+    width: 57%;
     height: 33px;
+}
+#legendmobile {
+    visibility: visible;
 }

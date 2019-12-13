@@ -35,11 +35,21 @@
             
   <div class="section" id="categories">
 <h1>Categories<a class="headerlink" href="#categories" title="Permalink to this headline">¶</a></h1>
-<p>Categories also follow the same workflow as seen in HomePage graph but it
-is explained in this chapter in a detailed manner.</p>
-<div class="graphviz"><img src="_images/graphviz-8949725c08c936e6dcb672aeaa78913c189c7ee7.png" alt="digraph Categories {
+<div class="graphviz"><img src="_images/graphviz-cb9b4c87470cda695d84d1777b09cb486336417e.png" alt="digraph Categories {
+
+   label=&quot;Working of Categories tab&quot;;
+
+   &quot;loadCategories \n(home.html)&quot; -&gt; &quot;loadCategories \n(views.py)&quot; -&gt;
+   &quot;categorize function \n(categories.py)&quot; -&gt;
+   {&quot;Faculties&quot;, &quot;Classrooms&quot;, &quot;Facilities&quot;, &quot;Labs&quot;, &quot;Offices&quot;}  -&gt;
+   &quot;Create HTML elements and assign icons&quot; -&gt;
+   &quot;Send to HTML&quot; -&gt;
+   &quot;Renders using MetisMenu plugin&quot;
+   &quot;Facilities&quot; -&gt; {&quot;Grad Longue / Grad Space&quot;, &quot;Restrooms (Male / Female)&quot;, &quot;Library&quot;}
 
 }" class="graphviz" /></div>
+<p>The above flow chart explains the things which will execute
+when request is made to the web app (in chronological order).</p>
 </div>
 
 
@@ -70,6 +80,7 @@ is explained in this chapter in a detailed manner.</p>
 <li class="toctree-l1"><a class="reference internal" href="7.AdminPage.html">AdminPage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="8.ExtendingWork.html">Extending the work</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.gitLog.html">Git Log</a></li>
 </ul>
 
 <div class="relations">

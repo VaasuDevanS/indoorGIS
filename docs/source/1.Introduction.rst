@@ -18,3 +18,28 @@ free, easy-to-use web hosting platform for python based web applications.
 .. _Leaflet: https://leafletjs.com/
 .. _Jquery: https://jquery.com/
 .. _pythonanywhere.com: https://www.pythonanywhere.com/
+
+
+Plugins / Packages
+~~~~~~~~~~~~~~~~~~
+
+=========== =================================== ======================
+Package     Reference                           Version
+=========== =================================== ======================
+Django      https://www.djangoproject.com/      2.1
+Networkx    https://networkx.github.io/         2.1
+Geopandas   `https://geopandas.org/`_           0.5.0 (pandas: 0.24.2)
+Leaflet     https://leafletjs.com               1.5.1
+Jquery      https://jquery.com/                 3.3.1
+Bootstrap   https://getbootstrap.com/           3.3.7
+Metismenu   https://mm.onokumus.com/            3.0.4
+FontAwesome https://fontawesome.com/            5.9.0
+W3          `https://www.w3schools.com/w3css/`_ 4.13
+Sphinx      `http://www.sphinx-doc.org/`_       2.2.1
+=========== =================================== ======================
+
+.. _`https://geopandas.org/`: http://geopandas.org/
+.. _`https://www.w3schools.com/w3css/`: https://www.w3schools.com/w3css/w3css_downloads.asp
+.. _`http://www.sphinx-doc.org/`: http://www.sphinx-doc.org/en/master/
+
+

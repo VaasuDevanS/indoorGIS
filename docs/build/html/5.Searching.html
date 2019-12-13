@@ -41,8 +41,6 @@ with python as the backend (obviously). Networkx is used to get shortest routes
 and nearest facilities and other fucntions related to routing. Geopandas is
 used to read shapefiles on-the-fly and make queries based on attributes or
 lcoation</p>
-<div class="section" id="workflow">
-<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">views.py</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -145,6 +143,27 @@ its PlaceNode and its name itself</p>
 This will also returns the nearest facilites for the given keyword.
 <strong>nearest_facility</strong> fucntion will look for all the facilities in all the
 categories and returns the one which can be accessed quickly.</p>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<div class="graphviz"><img src="_images/graphviz-6c51b267e2553c7d7599e746abedd47f7e7e682b.png" alt="digraph Searching {
+
+   label=&quot;Working of Searching tab&quot;;
+
+
+   &quot;Input in the 'Search For' box&quot; -&gt;
+   &quot;Click results from the search results dropdown&quot; -&gt;
+   &quot;Click Find button&quot; -&gt;
+   &quot;Function call search() \n(home.html)&quot; -&gt;
+   &quot;Ajax call searchBox to searchBox() function \n(views.py)&quot; -&gt;
+   &quot;Extract Level and keyword&quot; -&gt;
+   &quot;Read SHP files&quot; -&gt;
+   &quot;Check if keyword is equal to PlaceName or PersonName&quot; -&gt;
+   &quot;Append its OBJECTID to RETURN_LIST&quot; -&gt;
+   &quot;Get Nearest Facilities and append to RETURN_LIST&quot; -&gt;
+   &quot;Return RETURN_LIST to js function&quot; -&gt;
+   &quot;Get all the information and display accordingly&quot;
+
+}" class="graphviz" /></div>
 </div>
 </div>
 
@@ -179,6 +198,7 @@ categories and returns the one which can be accessed quickly.</p>
 <li class="toctree-l1"><a class="reference internal" href="7.AdminPage.html">AdminPage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="8.ExtendingWork.html">Extending the work</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9.Conclusion.html">Conclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.gitLog.html">Git Log</a></li>
 </ul>
 
 <div class="relations">
