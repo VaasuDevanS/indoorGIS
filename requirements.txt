@@ -1,5 +1,5 @@
 numpy==1.14.5
-Django==2.1
+Django==2.1.15
 Fiona==1.7.13
 GDAL==3.0.2
 pandas==0.24.2
