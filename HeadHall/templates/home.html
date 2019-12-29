@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="{% static 'HeadHall/css/toggle-switch.css' %}" /> <!-- https://ghinda.net/css-toggle-switch/ -->
     <link rel="stylesheet" href="{% static 'HeadHall/css/w3.css' %}">
     <link rel="stylesheet" href="{% static 'HeadHall/css/w3-theme-teal.css' %}">
-    <link rel="stylesheet" href="{% static 'HeadHall/css/easy-button.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="{% static 'HeadHall/css/easy-button.css' %}">
 
     <link rel="stylesheet"
           media="screen and (min-width: 300px) and (max-width: 800px)"
@@ -314,7 +314,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/entrances/Windsor_CSside.png' %}" width=100% height=40%>
-    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
+                        <br> Source: Google Street View
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -334,7 +334,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/entrances/Windsor_Otherside.png' %}" width=100% height=40%>
-    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
+                        <br> Source: Google Street View
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -354,7 +354,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/entrances/Dineen_CSside.png' %}" width=100% height=40%>
-    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
+                        <br> Source: Google Street View
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -374,7 +374,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/entrances/Dineen_Engside.png' %}" width=100% height=40%>
-    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
+                        <br> Source: Google Street View
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -394,7 +394,7 @@
     				</div>
     				<div class="modal-body">
                         <img src="{% static 'HeadHall/images/entrances/Dineen_Otherside.png' %}" width=100% height=40%>
-    				    <!-- <div id="fields" style="overflow: auto; height: 60%"> </div> -->
+                        <br> Source: Google Street View
     				</div>
     				<div class="modal-footer">
     					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -763,7 +763,8 @@ function onEachFeatureFunc(feature, layer) {
     if (feature.properties.PersonName != null) {
         content += "<i class='fas fa-user-alt'></i> " + feature.properties.PersonName + "<br>"; }
     if (feature.properties.PlaceName != null) {
-        content += "<i class='fas fa-map-marker-alt'></i> " + feature.properties.PlaceName; }
+        var name_for_stairs = feature.properties.PlaceName.replace("Steps", "Stairs").replace("Lift", "Elevator");
+        content += "<i class='fas fa-map-marker-alt'></i> " + name_for_stairs; }
     layer.bindPopup(content);
     layer.on('mouseover', function(f) { f.target.setStyle(selectStyle()) });
     layer.on('mouseout', function(f) { 
@@ -792,7 +793,7 @@ levelConfig = { minZoom: 2.45,
                 attributionControl: false,
               }
 var bounds = [[0, 0], [90, 180]];
-var opacity = {opacity: 0.6};
+var opacity = {opacity: 0.85};
 
 // E-Level
 url = "{% static 'HeadHall/baseimages/E_Level.png' %}";
@@ -821,14 +822,14 @@ bLevel.fitBounds(bounds);
 L.easyButton({
   states: [{
     stateName: 'show-labels',
-    icon: 'fa-infinity',
+    icon: 'fa-tag',
     title: 'Show Labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "block");
       control.state('remove-labels');
     }
   }, {
-    icon: 'fa-undo',
+    icon: 'fa-eye-slash',
     stateName: 'remove-labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "none");
@@ -841,14 +842,14 @@ L.easyButton({
 L.easyButton({
   states: [{
     stateName: 'show-labels',
-    icon: 'fa-infinity',
+    icon: "fa-tag",
     title: 'Show Labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "block");
       control.state('remove-labels');
     }
   }, {
-    icon: 'fa-undo',
+    icon: 'fa-eye-slash',
     stateName: 'remove-labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "none");
@@ -861,14 +862,14 @@ L.easyButton({
 L.easyButton({
   states: [{
     stateName: 'show-labels',
-    icon: 'fa-infinity',
+    icon: 'fa-tag',
     title: 'Show Labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "block");
       control.state('remove-labels');
     }
   }, {
-    icon: 'fa-undo',
+    icon: 'fa-eye-slash',
     stateName: 'remove-labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "none");
@@ -881,14 +882,14 @@ L.easyButton({
 L.easyButton({
   states: [{
     stateName: 'show-labels',
-    icon: 'fa-infinity',
+    icon: 'fa-tag',
     title: 'Show Labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "block");
       control.state('remove-labels');
     }
   }, {
-    icon: 'fa-undo',
+    icon: 'fa-eye-slash',
     stateName: 'remove-labels',
     onClick: function(control) {
       $('.leaflet-tooltip').css("display", "none");

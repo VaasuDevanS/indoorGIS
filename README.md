@@ -31,8 +31,10 @@ gdal_translate -of GTiff -a_ullr 0 90 180 0 -a_srs EPSG:4326 x_Level.jpg x_Level
 ### Commit log
 ***
 
-**Final commit (Dec 13, 2019)**
-* 
+**Final commit (Dec 29, 2019)**
+* Manually collected data for the HeadHall and updated the SHP files
+* Added Entrances (Dineen Dr and Windsor St) - its images as bootstrap modal
+* Fixed the multi-level Routing bug
 
 ***
 
